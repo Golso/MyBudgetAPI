@@ -9,5 +9,6 @@ namespace MyBudgetAPI.Data
     public interface IBudgetRepo
     {
         IEnumerable<Expense> GetAllExpenses();
+        Expense GetExpenseById(int id);
     }
 }

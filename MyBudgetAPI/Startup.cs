@@ -30,6 +30,7 @@ namespace MyBudgetAPI
             services.AddDbContext<BudgetDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DbConection")));
             services.AddControllers();
             services.AddScoped<DataSeeder>();
+            services.AddScoped<IBudgetRepo, SqlBudgetRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -19,12 +19,27 @@ namespace MyBudgetAPI.Controllers
             _repository = reposiory;
         }
 
+        //GET /api/expenses
         [HttpGet]
         public ActionResult<IEnumerable<Expense>> GetAllExpenses()
         {
             var expenses = _repository.GetAllExpenses();
 
-            return Ok();
+            return Ok(expenses);
+        }
+
+        //GET /api/expenses/{id}
+        [HttpGet("{id}")]
+        public ActionResult<Expense> GetExpenseById([FromRoute] int id)
+        {
+            var expense = _repository.GetExpenseById(id);
+
+            if (expense is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(expense);
         }
     }
 }

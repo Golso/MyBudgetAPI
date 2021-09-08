@@ -17,7 +17,12 @@ namespace MyBudgetAPI.Data
 
         public IEnumerable<Expense> GetAllExpenses()
         {
-            throw new NotImplementedException();
+            return _context.Expenses.ToList();
+        }
+
+        public Expense GetExpenseById(int id)
+        {
+            return _context.Expenses.Find(id);
         }
     }
 }
