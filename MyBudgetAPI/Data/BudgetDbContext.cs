@@ -15,5 +15,6 @@ namespace MyBudgetAPI.Data
         } 
 
         public DbSet<Expense> Expenses { get; set; }
+        public DbSet<Profit> Profits { get; set; }
     }
 }

@@ -28,13 +28,15 @@ namespace MyBudgetAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<BudgetDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DbConection")));
-
             services.AddControllers();
+            services.AddScoped<DataSeeder>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataSeeder seeder)
         {
+            seeder.Seed();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

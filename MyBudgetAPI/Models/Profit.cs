@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyBudgetAPI.Models
 {
-    public class Expense
+    public class Profit
     {
         [Key]
         public int Id { get; set; }
@@ -14,11 +14,12 @@ namespace MyBudgetAPI.Models
         [Required]
         public double Amount { get; set; }
 
-        public string Category { get; set; }
+        public string Source { get; set; }
 
         public string Description { get; set; }
 
         [Required]
         public DateTime Date { get; set; }
+
     }
 }
