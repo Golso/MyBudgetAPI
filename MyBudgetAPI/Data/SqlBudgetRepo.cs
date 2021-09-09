@@ -35,5 +35,16 @@ namespace MyBudgetAPI.Data
             _context.Expenses.Add(expense);
             _context.SaveChanges();
         }
+
+        public void DeleteExpense(Expense expense)
+        {
+            if (expense is null)
+            {
+                throw new ArgumentNullException(nameof(expense));
+            }
+
+            _context.Expenses.Remove(expense);
+            _context.SaveChanges();
+        }
     }
 }

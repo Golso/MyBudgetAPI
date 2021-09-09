@@ -11,5 +11,6 @@ namespace MyBudgetAPI.Data
         IEnumerable<Expense> GetAllExpenses();
         Expense GetExpenseById(int id);
         void CreateExpense(Expense expense);
+        void DeleteExpense(Expense expense);
     }
 }

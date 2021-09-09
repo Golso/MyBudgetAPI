@@ -50,10 +50,30 @@ namespace MyBudgetAPI.Controllers
         [HttpPost]
         public ActionResult CreateExpense([FromBody] ExpenseCreateDto expenseCreateDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var expense = _mapper.Map<Expense>(expenseCreateDto);
             _repository.CreateExpense(expense);
 
             return Created($"/api/expenses/{expense.Id}", null);
+        }
+
+        //DELETE /api/expense/{id}
+        [HttpDelete("{id}")]
+        public ActionResult DeleteExpense(int id)
+        {
+            var expense = _repository.GetExpenseById(id);
+            if(expense is null)
+            {
+                return NotFound();
+            }
+
+            _repository.DeleteExpense(expense);
+
+            return Ok();
         }
     }
 }
