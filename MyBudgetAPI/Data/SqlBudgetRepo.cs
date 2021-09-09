@@ -24,5 +24,16 @@ namespace MyBudgetAPI.Data
         {
             return _context.Expenses.Find(id);
         }
+
+        public void CreateExpense(Expense expense)
+        {
+            if (expense is null)
+            {
+                throw new ArgumentNullException(nameof(expense));
+            }
+
+            _context.Expenses.Add(expense);
+            _context.SaveChanges();
+        }
     }
 }
