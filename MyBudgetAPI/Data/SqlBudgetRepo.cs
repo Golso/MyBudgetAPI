@@ -1,4 +1,6 @@
-﻿using MyBudgetAPI.Models;
+﻿using AutoMapper;
+using MyBudgetAPI.Dtos;
+using MyBudgetAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,42 +11,49 @@ namespace MyBudgetAPI.Data
     public class SqlBudgetRepo : IBudgetRepo
     {
         private readonly BudgetDbContext _context;
+        private readonly IMapper _mapper;
 
-        public SqlBudgetRepo(BudgetDbContext context)
+        public SqlBudgetRepo(BudgetDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
+
         }
 
-        public IEnumerable<Expense> GetAllExpenses()
+        public IEnumerable<ExpenseReadDto> GetAllExpenses()
         {
-            return _context.Expenses.ToList();
+            var expenses = _context.Expenses.ToList();
+            
+            return _mapper.Map<List<ExpenseReadDto>>(expenses);
         }
 
-        public Expense GetExpenseById(int id)
+        public ExpenseReadDto GetExpenseById(int id)
         {
-            return _context.Expenses.Find(id);
+            var expense = _context.Expenses.Find(id);
+            
+            return _mapper.Map<ExpenseReadDto>(expense);
         }
 
-        public void CreateExpense(Expense expense)
+        public int CreateExpense(ExpenseCreateDto dto)
         {
-            if (expense is null)
-            {
-                throw new ArgumentNullException(nameof(expense));
-            }
-
+            var expense = _mapper.Map<Expense>(dto);
             _context.Expenses.Add(expense);
             _context.SaveChanges();
+
+            return expense.Id;
         }
 
-        public void DeleteExpense(Expense expense)
+        public Expense DeleteExpense(int id)
         {
-            if (expense is null)
+            var expense = _context.Expenses.Find(id);
+
+            if (expense is not null)
             {
-                throw new ArgumentNullException(nameof(expense));
+                _context.Expenses.Remove(expense);
+                _context.SaveChanges();
             }
 
-            _context.Expenses.Remove(expense);
-            _context.SaveChanges();
+            return expense;
         }
     }
 }

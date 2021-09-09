@@ -15,12 +15,11 @@ namespace MyBudgetAPI.Controllers
     public class ExpensesController : ControllerBase
     {
         private readonly IBudgetRepo _repository;
-        private readonly IMapper _mapper;
+        
 
-        public ExpensesController(IBudgetRepo reposiory, IMapper mapper)
+        public ExpensesController(IBudgetRepo reposiory)
         {
             _repository = reposiory;
-            _mapper = mapper;
         }
 
         //GET /api/expenses
@@ -29,7 +28,7 @@ namespace MyBudgetAPI.Controllers
         {
             var expenses = _repository.GetAllExpenses();
 
-            return Ok(_mapper.Map<List<ExpenseReadDto>>(expenses));
+            return Ok(expenses);
         }
 
         //GET /api/expenses/{id}
@@ -43,7 +42,7 @@ namespace MyBudgetAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<ExpenseReadDto>(expense));
+            return Ok(expense);
         }
 
         //POST /api/expenses
@@ -54,26 +53,24 @@ namespace MyBudgetAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
+            
+            var id = _repository.CreateExpense(expenseCreateDto);
 
-            var expense = _mapper.Map<Expense>(expenseCreateDto);
-            _repository.CreateExpense(expense);
-
-            return Created($"/api/expenses/{expense.Id}", null);
+            return Created($"/api/expenses/{id}", null);
         }
 
         //DELETE /api/expense/{id}
         [HttpDelete("{id}")]
-        public ActionResult DeleteExpense(int id)
+        public ActionResult<Expense> DeleteExpense(int id)
         {
-            var expense = _repository.GetExpenseById(id);
-            if(expense is null)
+            var expense = _repository.DeleteExpense(id);
+
+            if (expense is null)
             {
                 return NotFound();
             }
 
-            _repository.DeleteExpense(expense);
-
-            return Ok();
+            return Ok(expense);
         }
     }
 }
