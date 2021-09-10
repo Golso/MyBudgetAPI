@@ -43,7 +43,7 @@ namespace MyBudgetAPI.Data
             return expense.Id;
         }
 
-        public Expense DeleteExpense(int id)
+        public bool DeleteExpense(int id)
         {
             var expense = _context.Expenses.Find(id);
 
@@ -51,9 +51,28 @@ namespace MyBudgetAPI.Data
             {
                 _context.Expenses.Remove(expense);
                 _context.SaveChanges();
+                return true;
             }
 
-            return expense;
+            return false;
+        }
+
+        public bool UpdateExpense(int id, ExpenseUpdateDto expenseUpdateDto)
+        {
+            var expense = _context.Expenses.Find(id);
+
+            if (expense is null)
+            {
+                return false;
+            }
+
+            expense.Amount = expenseUpdateDto.Amount;
+            expense.Category = expenseUpdateDto.Category;
+            expense.Description = expenseUpdateDto.Description;
+
+            _context.SaveChanges();
+
+            return true;
         }
     }
 }

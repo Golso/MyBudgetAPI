@@ -12,6 +12,7 @@ namespace MyBudgetAPI.Data
         IEnumerable<ExpenseReadDto> GetAllExpenses();
         ExpenseReadDto GetExpenseById(int id);
         int CreateExpense(ExpenseCreateDto expense);
-        Expense DeleteExpense(int id);
+        bool DeleteExpense(int id);
+        bool UpdateExpense(int id, ExpenseUpdateDto expenseUpdateDto);
     }
 }

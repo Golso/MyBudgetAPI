@@ -16,7 +16,6 @@ namespace MyBudgetAPI.Controllers
     {
         private readonly IBudgetRepo _repository;
         
-
         public ExpensesController(IBudgetRepo reposiory)
         {
             _repository = reposiory;
@@ -61,16 +60,35 @@ namespace MyBudgetAPI.Controllers
 
         //DELETE /api/expense/{id}
         [HttpDelete("{id}")]
-        public ActionResult<Expense> DeleteExpense(int id)
+        public ActionResult DeleteExpense([FromRoute] int id)
         {
             var expense = _repository.DeleteExpense(id);
 
-            if (expense is null)
+            if (!expense)
             {
                 return NotFound();
             }
 
-            return Ok(expense);
+            return NoContent();
+        }
+
+        //PUT /api/expenses/{id}
+        [HttpPut("{id}")]
+        public ActionResult UpdateExpense([FromRoute] int id, [FromBody] ExpenseUpdateDto expenseUpdateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var expense = _repository.UpdateExpense(id, expenseUpdateDto);
+
+            if (!expense)
+            {
+                return NotFound();
+            }
+
+            return Ok();
         }
     }
 }
