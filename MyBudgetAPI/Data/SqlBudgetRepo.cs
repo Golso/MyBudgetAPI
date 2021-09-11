@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using MyBudgetAPI.Dtos;
+using MyBudgetAPI.Exceptions;
 using MyBudgetAPI.Models;
 using System;
 using System.Collections.Generic;
@@ -12,12 +14,13 @@ namespace MyBudgetAPI.Data
     {
         private readonly BudgetDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<SqlBudgetRepo> _logger;
 
-        public SqlBudgetRepo(BudgetDbContext context, IMapper mapper)
+        public SqlBudgetRepo(BudgetDbContext context, IMapper mapper, ILogger<SqlBudgetRepo> logger)
         {
             _context = context;
             _mapper = mapper;
-
+            _logger = logger;
         }
 
         public IEnumerable<ExpenseReadDto> GetAllExpenses()
@@ -43,27 +46,26 @@ namespace MyBudgetAPI.Data
             return expense.Id;
         }
 
-        public bool DeleteExpense(int id)
-        {
-            var expense = _context.Expenses.Find(id);
-
-            if (expense is not null)
-            {
-                _context.Expenses.Remove(expense);
-                _context.SaveChanges();
-                return true;
-            }
-
-            return false;
-        }
-
-        public bool UpdateExpense(int id, ExpenseUpdateDto expenseUpdateDto)
+        public void DeleteExpense(int id)
         {
             var expense = _context.Expenses.Find(id);
 
             if (expense is null)
             {
-                return false;
+                throw new NotFoundException("Expense not found.");
+            }
+
+            _context.Expenses.Remove(expense);
+            _context.SaveChanges();
+        }
+
+        public void UpdateExpense(int id, ExpenseUpdateDto expenseUpdateDto)
+        {
+            var expense = _context.Expenses.Find(id);
+
+            if (expense is null)
+            {
+                throw new NotFoundException("Expense not found.");
             }
 
             expense.Amount = expenseUpdateDto.Amount;
@@ -71,8 +73,6 @@ namespace MyBudgetAPI.Data
             expense.Description = expenseUpdateDto.Description;
 
             _context.SaveChanges();
-
-            return true;
         }
     }
 }

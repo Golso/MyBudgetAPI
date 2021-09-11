@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MyBudgetAPI.Data;
 using MyBudgetAPI.Dtos;
+using MyBudgetAPI.Exceptions;
 using MyBudgetAPI.Models;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace MyBudgetAPI.Controllers
 
             if (expense is null)
             {
-                return NotFound();
+                throw new NotFoundException("Expense not found.");
             }
 
             return Ok(expense);
@@ -48,11 +49,6 @@ namespace MyBudgetAPI.Controllers
         [HttpPost]
         public ActionResult CreateExpense([FromBody] ExpenseCreateDto expenseCreateDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            
             var id = _repository.CreateExpense(expenseCreateDto);
 
             return Created($"/api/expenses/{id}", null);
@@ -62,12 +58,7 @@ namespace MyBudgetAPI.Controllers
         [HttpDelete("{id}")]
         public ActionResult DeleteExpense([FromRoute] int id)
         {
-            var expense = _repository.DeleteExpense(id);
-
-            if (!expense)
-            {
-                return NotFound();
-            }
+            _repository.DeleteExpense(id);
 
             return NoContent();
         }
@@ -76,17 +67,7 @@ namespace MyBudgetAPI.Controllers
         [HttpPut("{id}")]
         public ActionResult UpdateExpense([FromRoute] int id, [FromBody] ExpenseUpdateDto expenseUpdateDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var expense = _repository.UpdateExpense(id, expenseUpdateDto);
-
-            if (!expense)
-            {
-                return NotFound();
-            }
+            _repository.UpdateExpense(id, expenseUpdateDto);
 
             return Ok();
         }
