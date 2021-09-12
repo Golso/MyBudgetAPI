@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using MyBudgetAPI.Dtos;
 using MyBudgetAPI.Exceptions;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MyBudgetAPI.Data
 {
@@ -71,6 +73,23 @@ namespace MyBudgetAPI.Data
             expense.Amount = expenseUpdateDto.Amount;
             expense.Category = expenseUpdateDto.Category;
             expense.Description = expenseUpdateDto.Description;
+
+            _context.SaveChanges();
+        }
+
+        public void PartialUpdateExpense(int id, JsonPatchDocument<ExpenseUpdateDto> patchDocument)
+        {
+            var expenseModelFromRepo = _context.Expenses.Find(id);
+
+            if (expenseModelFromRepo is null)
+            {
+                throw new NotFoundException("Expense not found.");
+            }
+
+            var expenseToPatch = _mapper.Map<ExpenseUpdateDto>(expenseModelFromRepo);
+            patchDocument.ApplyTo(expenseToPatch);
+
+            _mapper.Map(expenseToPatch, expenseModelFromRepo);
 
             _context.SaveChanges();
         }

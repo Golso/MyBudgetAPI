@@ -1,4 +1,5 @@
-﻿using MyBudgetAPI.Dtos;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using MyBudgetAPI.Dtos;
 using MyBudgetAPI.Models;
 using System;
 using System.Collections.Generic;
@@ -14,5 +15,6 @@ namespace MyBudgetAPI.Data
         int CreateExpense(ExpenseCreateDto expense);
         void DeleteExpense(int id);
         void UpdateExpense(int id, ExpenseUpdateDto expenseUpdateDto);
+        void PartialUpdateExpense(int id, JsonPatchDocument<ExpenseUpdateDto> patchDocument);
     }
 }

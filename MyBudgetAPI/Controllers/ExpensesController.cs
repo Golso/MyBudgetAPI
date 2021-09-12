@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MyBudgetAPI.Data;
 using MyBudgetAPI.Dtos;
@@ -68,6 +69,22 @@ namespace MyBudgetAPI.Controllers
         public ActionResult UpdateExpense([FromRoute] int id, [FromBody] ExpenseUpdateDto expenseUpdateDto)
         {
             _repository.UpdateExpense(id, expenseUpdateDto);
+
+            return Ok();
+        }
+
+
+        //PATCH /api/expenses/{id}
+        [HttpPatch("{id}")]
+        public ActionResult PartialExpenseUpdate([FromRoute] int id, [FromBody] JsonPatchDocument<ExpenseUpdateDto> patchDocument)
+        {
+            if (patchDocument is null)
+            {
+                //_logger.LogError("patchDoc object sent from client is null.");
+                return BadRequest("patchDoc object is null");
+            }
+
+            _repository.PartialUpdateExpense(id, patchDocument);
 
             return Ok();
         }

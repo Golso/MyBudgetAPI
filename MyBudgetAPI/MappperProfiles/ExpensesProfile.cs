@@ -16,6 +16,8 @@ namespace MyBudgetAPI.MappperProfiles
             CreateMap<Expense, ExpenseReadDto>();
             CreateMap<ExpenseReadDto, Expense>();
             CreateMap<ExpenseCreateDto, Expense>();
+            CreateMap<Expense, ExpenseUpdateDto>();
+            CreateMap<ExpenseUpdateDto, Expense>();
         }
     }
 }
