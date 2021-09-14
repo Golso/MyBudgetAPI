@@ -35,7 +35,8 @@ namespace MyBudgetAPI
                 s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
             services.AddScoped<DataSeeder>();
-            services.AddScoped<IBudgetRepo, SqlBudgetRepo>();
+            services.AddScoped<IExpenseRepository, ExpenseRepository>();
+            services.AddScoped<IProfitRepository, ProfitRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<ErrorHandlingMiddleware>();
             services.AddScoped<RequestTimeMiddleware>();

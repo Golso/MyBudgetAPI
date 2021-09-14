@@ -4,13 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MyBudgetAPI.Models
+namespace MyBudgetAPI.Dtos
 {
-    public class Profit
+    public class ProfitCreateDto
     {
-        [Key]
-        public int Id { get; set; }
-
         [Required]
         public double Amount { get; set; }
 
@@ -21,6 +18,5 @@ namespace MyBudgetAPI.Models
 
         [Required]
         public DateTime Date { get; set; }
-
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MyBudgetAPI.Data
 {
-    public interface IBudgetRepo
+    public interface IExpenseRepository
     {
         IEnumerable<ExpenseReadDto> GetAllExpenses();
         ExpenseReadDto GetExpenseById(int id);

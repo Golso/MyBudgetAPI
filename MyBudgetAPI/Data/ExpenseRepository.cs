@@ -12,17 +12,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MyBudgetAPI.Data
 {
-    public class SqlBudgetRepo : IBudgetRepo
+    public class ExpenseRepository : IExpenseRepository
     {
         private readonly BudgetDbContext _context;
         private readonly IMapper _mapper;
-        private readonly ILogger<SqlBudgetRepo> _logger;
 
-        public SqlBudgetRepo(BudgetDbContext context, IMapper mapper, ILogger<SqlBudgetRepo> logger)
+        public ExpenseRepository(BudgetDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _logger = logger;
         }
 
         public IEnumerable<ExpenseReadDto> GetAllExpenses()
@@ -35,12 +33,27 @@ namespace MyBudgetAPI.Data
         public ExpenseReadDto GetExpenseById(int id)
         {
             var expense = _context.Expenses.Find(id);
-            
+
+            if (expense is null)
+            {
+                throw new NotFoundException("Expense not found.");
+            }
+
             return _mapper.Map<ExpenseReadDto>(expense);
         }
 
         public int CreateExpense(ExpenseCreateDto dto)
         {
+            //No idea why required attribute is not working
+            if (dto.Amount <= 0)
+            {
+                throw new BadRequestException("Amount is required and it should be positive number.");
+            }
+            if (dto.Date == DateTime.MinValue)
+            {
+                throw new BadRequestException("Date is required.");
+            }
+
             var expense = _mapper.Map<Expense>(dto);
             _context.Expenses.Add(expense);
             _context.SaveChanges();
@@ -63,6 +76,11 @@ namespace MyBudgetAPI.Data
 
         public void UpdateExpense(int id, ExpenseUpdateDto expenseUpdateDto)
         {
+            if (expenseUpdateDto.Amount <= 0)
+            {
+                throw new BadRequestException("Amount is required and it should be positive number.");
+            }
+
             var expense = _context.Expenses.Find(id);
 
             if (expense is null)
@@ -79,6 +97,11 @@ namespace MyBudgetAPI.Data
 
         public void PartialUpdateExpense(int id, JsonPatchDocument<ExpenseUpdateDto> patchDocument)
         {
+            if (patchDocument is null)
+            {
+                throw new BadRequestException("patchDocument object is null.");
+            }
+
             var expenseModelFromRepo = _context.Expenses.Find(id);
 
             if (expenseModelFromRepo is null)

@@ -28,6 +28,13 @@ namespace MyBudgetAPI.Middleware
                 context.Response.StatusCode = 404;
                 await context.Response.WriteAsync(notFoundException.Message);
             }
+            catch (BadRequestException badRequestException)
+            {
+                _logger.LogError(badRequestException, badRequestException.Message);
+
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync(badRequestException.Message);
+            }
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);

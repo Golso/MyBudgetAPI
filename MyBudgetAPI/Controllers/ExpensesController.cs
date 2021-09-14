@@ -16,9 +16,9 @@ namespace MyBudgetAPI.Controllers
     [ApiController]
     public class ExpensesController : ControllerBase
     {
-        private readonly IBudgetRepo _repository;
+        private readonly IExpenseRepository _repository;
         
-        public ExpensesController(IBudgetRepo reposiory)
+        public ExpensesController(IExpenseRepository reposiory)
         {
             _repository = reposiory;
         }
@@ -37,11 +37,6 @@ namespace MyBudgetAPI.Controllers
         public ActionResult<ExpenseReadDto> GetExpenseById([FromRoute] int id)
         {
             var expense = _repository.GetExpenseById(id);
-
-            if (expense is null)
-            {
-                throw new NotFoundException("Expense not found.");
-            }
 
             return Ok(expense);
         }
@@ -78,12 +73,6 @@ namespace MyBudgetAPI.Controllers
         [HttpPatch("{id}")]
         public ActionResult PartialExpenseUpdate([FromRoute] int id, [FromBody] JsonPatchDocument<ExpenseUpdateDto> patchDocument)
         {
-            if (patchDocument is null)
-            {
-                //_logger.LogError("patchDoc object sent from client is null.");
-                return BadRequest("patchDoc object is null");
-            }
-
             _repository.PartialUpdateExpense(id, patchDocument);
 
             return Ok();
