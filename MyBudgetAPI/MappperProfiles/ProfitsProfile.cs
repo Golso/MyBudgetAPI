@@ -13,6 +13,10 @@ namespace MyBudgetAPI.MappperProfiles
         public ProfitsProfile() 
         {
             CreateMap<Profit, ProfitReadDto>();
+            CreateMap<ProfitCreateDto, Profit>();
+            CreateMap<ProfitReadDto, Profit>();
+            CreateMap<Profit, ProfitUpdateDto>();
+            CreateMap<ProfitUpdateDto, Profit>();
         }
     }
 }

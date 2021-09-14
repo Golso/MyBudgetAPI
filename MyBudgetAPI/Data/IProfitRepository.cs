@@ -11,9 +11,9 @@ namespace MyBudgetAPI.Data
     {
         IEnumerable<ProfitReadDto> GetAllProfits();
         ProfitReadDto GetProfitById(int id);
-        int CreateProfit(ProfitCreateDto expense);
+        int CreateProfit(ProfitCreateDto profitCreateDto);
         void DeleteProfit(int id);
-        void UpdateProfit(int id, ProfitUpdateDto expenseUpdateDto);
+        void UpdateProfit(int id, ProfitUpdateDto profitUpdateDto);
         void PartialUpdateProfit(int id, JsonPatchDocument<ProfitUpdateDto> patchDocument);
     }
 }
