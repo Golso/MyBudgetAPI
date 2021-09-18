@@ -64,7 +64,7 @@ namespace MyBudgetAPI.Controllers
         {
             _repository.UpdateProfit(id, profitUpdateDto);
 
-            return Ok();
+            return NoContent();
         }
 
 
@@ -74,7 +74,7 @@ namespace MyBudgetAPI.Controllers
         {
             _repository.PartialUpdateProfit(id, patchDocument);
 
-            return Ok();
+            return NoContent();
         }
     }
 }

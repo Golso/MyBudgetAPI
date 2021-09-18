@@ -65,7 +65,7 @@ namespace MyBudgetAPI.Controllers
         {
             _repository.UpdateExpense(id, expenseUpdateDto);
 
-            return Ok();
+            return NoContent();
         }
 
 
@@ -75,7 +75,7 @@ namespace MyBudgetAPI.Controllers
         {
             _repository.PartialUpdateExpense(id, patchDocument);
 
-            return Ok();
+            return NoContent();
         }
     }
 }
