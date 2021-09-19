@@ -22,9 +22,21 @@ namespace MyBudgetAPI.Data
                 if (!_dbContext.Expenses.Any())
                 {
                     var expenses = GetExpenses();
-                    var profits = GetProfits();
                     _dbContext.Expenses.AddRange(expenses);
+                    _dbContext.SaveChanges();
+                }
+
+                if (!_dbContext.Profits.Any())
+                {
+                    var profits = GetProfits();
                     _dbContext.Profits.AddRange(profits);
+                    _dbContext.SaveChanges();
+                }
+
+                if (!_dbContext.Roles.Any())
+                {
+                    var roles = GetRoles();
+                    _dbContext.Roles.AddRange(roles);
                     _dbContext.SaveChanges();
                 }
             }
@@ -73,6 +85,22 @@ namespace MyBudgetAPI.Data
             };
 
             return profits;
+        }
+
+        private IEnumerable<Role> GetRoles()
+        {
+            var roles = new List<Role>()
+            {
+                new Role()
+                {
+                    Name = "User"
+                },
+                new Role()
+                {
+                    Name = "Admin"
+                }
+            };
+            return roles;
         }
     }
 }

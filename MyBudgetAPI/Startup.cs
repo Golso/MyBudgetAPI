@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MyBudgetAPI.Data;
+using MyBudgetAPI.Data.Interfaces;
 using MyBudgetAPI.Middleware;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -37,6 +38,7 @@ namespace MyBudgetAPI
             services.AddScoped<DataSeeder>();
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
             services.AddScoped<IProfitRepository, ProfitRepository>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<ErrorHandlingMiddleware>();
             services.AddScoped<RequestTimeMiddleware>();
