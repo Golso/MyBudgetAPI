@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using MyBudgetAPI.Data.Interfaces;
 using MyBudgetAPI.Dtos;
 using MyBudgetAPI.Models;
@@ -12,10 +13,12 @@ namespace MyBudgetAPI.Data
     public class AccountRepository : IAccountRepository
     {
         private readonly BudgetDbContext _context;
+        private readonly IPasswordHasher<User> _passwordHasher;
 
-        public AccountRepository(BudgetDbContext context)
+        public AccountRepository(BudgetDbContext context, IPasswordHasher<User> passwordHasher)
         {
             _context = context;
+            _passwordHasher = passwordHasher;
         }
 
         public void RegisterUser(RegisterUserDto dto)
@@ -27,6 +30,8 @@ namespace MyBudgetAPI.Data
                 RoleId = dto.RoleId
             };
 
+            var hashedPassword = _passwordHasher.HashPassword(newUser, dto.Password);
+            newUser.PasswordHash = hashedPassword;
             _context.Users.Add(newUser);
             _context.SaveChanges();
         }
