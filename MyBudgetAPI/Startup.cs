@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,8 +12,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MyBudgetAPI.Data;
 using MyBudgetAPI.Data.Interfaces;
+using MyBudgetAPI.Dtos;
 using MyBudgetAPI.Middleware;
 using MyBudgetAPI.Models;
+using MyBudgetAPI.Models.Validators;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
@@ -36,13 +40,14 @@ namespace MyBudgetAPI
             services.AddControllers().AddNewtonsoftJson(s =>
             {
                 s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            });
+            }).AddFluentValidation();
             services.AddScoped<DataSeeder>();
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
             services.AddScoped<IProfitRepository, ProfitRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
             services.AddScoped<ErrorHandlingMiddleware>();
             services.AddScoped<RequestTimeMiddleware>();
             services.AddSwaggerGen();
