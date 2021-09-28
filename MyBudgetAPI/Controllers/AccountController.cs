@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBudgetAPI.Data.Interfaces;
 using MyBudgetAPI.Dtos;
+using MyBudgetAPI.Dtos.UserDto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,13 @@ namespace MyBudgetAPI.Controllers
             _repository.RegisterUser(dto);
 
             return Ok();
+        }
+
+        [HttpPost("login")]
+        public ActionResult Login([FromBody] LoginDto dto)
+        {
+            string token = _repository.GenerateJwt(dto);
+            return Ok(token);
         }
     }
 }
