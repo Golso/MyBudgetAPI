@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ namespace MyBudgetAPI.Controllers
 {
     [Route("api/profits")]
     [ApiController]
+    [Authorize]
     public class ProfitController : ControllerBase
     {
         private readonly IProfitRepository _repository;

@@ -20,12 +20,14 @@ namespace MyBudgetAPI.Data
     public class AccountRepository : IAccountRepository
     {
         private readonly BudgetDbContext _context;
+        private readonly IMapper _mapper;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly AuthenticationSettings _authenticationSettings;
 
-        public AccountRepository(BudgetDbContext context, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings)
+        public AccountRepository(BudgetDbContext context, IMapper mapper, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings)
         {
             _context = context;
+            _mapper = mapper;
             _passwordHasher = passwordHasher;
             _authenticationSettings = authenticationSettings;
         }
@@ -67,6 +69,13 @@ namespace MyBudgetAPI.Data
 
             var tokenHandler = new JwtSecurityTokenHandler();
             return tokenHandler.WriteToken(token);
+        }
+
+        public IEnumerable<UserReadDto> GetAllUsers()
+        {
+            var users = _context.Users.ToList();
+
+            return _mapper.Map<List<UserReadDto>>(users);
         }
 
         public void RegisterUser(RegisterUserDto dto)

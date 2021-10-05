@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MyBudgetAPI.Data.Interfaces;
 using MyBudgetAPI.Dtos;
 using MyBudgetAPI.Dtos.UserDto;
@@ -33,6 +34,15 @@ namespace MyBudgetAPI.Controllers
         {
             string token = _repository.GenerateJwt(dto);
             return Ok(token);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public ActionResult<IEnumerable<UserReadDto>> GetAllUsers()
+        {
+            var users = _repository.GetAllUsers();
+
+            return Ok(users);
         }
     }
 }

@@ -11,5 +11,6 @@ namespace MyBudgetAPI.Data.Interfaces
     {
         public void RegisterUser(RegisterUserDto dto);
         string GenerateJwt(LoginDto dto);
+        IEnumerable<UserReadDto> GetAllUsers();
     }
 }

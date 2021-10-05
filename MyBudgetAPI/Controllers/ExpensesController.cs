@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MyBudgetAPI.Data;
@@ -14,6 +15,7 @@ namespace MyBudgetAPI.Controllers
 {
     [Route("api/expenses")]
     [ApiController]
+    [Authorize]
     public class ExpensesController : ControllerBase
     {
         private readonly IExpenseRepository _repository;
