@@ -20,6 +20,10 @@ namespace MyBudgetAPI.Models.Validators
 
             RuleFor(x => x.ConfirmPassword).Equal(e => e.Password);
 
+            RuleFor(x => x.FirstName).MinimumLength(3);
+
+            RuleFor(x => x.LastName).MinimumLength(2);
+
             RuleFor(x => x.Email).Custom((value, context) =>
             {
                 var emailInUse = budgetDbContext.Users.Any(u => u.Email == value);
