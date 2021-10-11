@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MyBudgetAPI.Data.Interfaces;
 
 namespace MyBudgetAPI.Data
 {
@@ -16,16 +17,20 @@ namespace MyBudgetAPI.Data
     {
         private readonly BudgetDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IUserContextService _userContextService;
 
-        public ExpenseRepository(BudgetDbContext context, IMapper mapper)
+        public ExpenseRepository(BudgetDbContext context, IMapper mapper, IUserContextService userContextService)
         {
             _context = context;
             _mapper = mapper;
+            _userContextService = userContextService;
         }
 
         public IEnumerable<ExpenseReadDto> GetAllExpenses()
         {
-            var expenses = _context.Expenses.ToList();
+            //var expenses = _context.Expenses.ToList();
+
+            var expenses = _context.Expenses.Where(e => e.UserId == _userContextService.GetUserId).ToList();
             
             return _mapper.Map<List<ExpenseReadDto>>(expenses);
         }
@@ -37,6 +42,11 @@ namespace MyBudgetAPI.Data
             if (expense is null)
             {
                 throw new NotFoundException("Expense not found.");
+            }
+
+            if (expense.UserId != _userContextService.GetUserId)
+            {
+                throw new ForbiddenException("Expense of other user.");
             }
 
             return _mapper.Map<ExpenseReadDto>(expense);
@@ -55,6 +65,7 @@ namespace MyBudgetAPI.Data
             }
 
             var expense = _mapper.Map<Expense>(dto);
+            expense.UserId = _userContextService.GetUserId;
             _context.Expenses.Add(expense);
             _context.SaveChanges();
 
@@ -68,6 +79,11 @@ namespace MyBudgetAPI.Data
             if (expense is null)
             {
                 throw new NotFoundException("Expense not found.");
+            }
+
+            if (expense.UserId != _userContextService.GetUserId)
+            {
+                throw new ForbiddenException("Expense of other user.");
             }
 
             _context.Expenses.Remove(expense);
@@ -86,6 +102,11 @@ namespace MyBudgetAPI.Data
             if (expense is null)
             {
                 throw new NotFoundException("Expense not found.");
+            }
+
+            if (expense.UserId != _userContextService.GetUserId)
+            {
+                throw new ForbiddenException("Expense of other user.");
             }
 
             expense.Amount = expenseUpdateDto.Amount;
@@ -107,6 +128,11 @@ namespace MyBudgetAPI.Data
             if (expenseModelFromRepo is null)
             {
                 throw new NotFoundException("Expense not found.");
+            }
+
+            if (expenseModelFromRepo.UserId != _userContextService.GetUserId)
+            {
+                throw new ForbiddenException("Expense of other user.");
             }
 
             var expenseToPatch = _mapper.Map<ExpenseUpdateDto>(expenseModelFromRepo);

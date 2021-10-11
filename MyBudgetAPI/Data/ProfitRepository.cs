@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using MyBudgetAPI.Data.Interfaces;
 using MyBudgetAPI.Dtos;
 using MyBudgetAPI.Exceptions;
 using MyBudgetAPI.Models;
@@ -14,11 +15,13 @@ namespace MyBudgetAPI.Data
     {
         private readonly BudgetDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IUserContextService _userContextService;
 
-        public ProfitRepository(BudgetDbContext context, IMapper mapper)
+        public ProfitRepository(BudgetDbContext context, IMapper mapper, IUserContextService userContextService)
         {
             _context = context;
             _mapper = mapper;
+            _userContextService = userContextService;
         }
 
         public int CreateProfit(ProfitCreateDto profitCreateDto)
@@ -33,6 +36,7 @@ namespace MyBudgetAPI.Data
             }
 
             var profit = _mapper.Map<Profit>(profitCreateDto);
+            profit.UserId = _userContextService.GetUserId;
             _context.Profits.Add(profit);
             _context.SaveChanges();
 
@@ -48,13 +52,18 @@ namespace MyBudgetAPI.Data
                 throw new NotFoundException("Profit not found.");
             }
 
+            if (profit.UserId != _userContextService.GetUserId)
+            {
+                throw new ForbiddenException("Profit of other user.");
+            }
+
             _context.Profits.Remove(profit);
             _context.SaveChanges();
         }
 
         public IEnumerable<ProfitReadDto> GetAllProfits()
         {
-            var profits = _context.Profits.ToList();
+            var profits = _context.Profits.Where(p => p.UserId == _userContextService.GetUserId).ToList();
 
             return _mapper.Map<List<ProfitReadDto>>(profits);
         }
@@ -63,9 +72,14 @@ namespace MyBudgetAPI.Data
         {
             var profit = _context.Profits.Find(id);
 
-            if(profit is null)
+            if (profit is null)
             {
                 throw new NotFoundException("Profit not found.");
+            }
+
+            if (profit.UserId != _userContextService.GetUserId)
+            {
+                throw new ForbiddenException("Profit of other user.");
             }
 
             return _mapper.Map<ProfitReadDto>(profit);
@@ -83,6 +97,11 @@ namespace MyBudgetAPI.Data
             if (profitModelFromRepo is null)
             {
                 throw new NotFoundException("Profit not found.");
+            }
+
+            if (profitModelFromRepo.UserId != _userContextService.GetUserId)
+            {
+                throw new ForbiddenException("Profit of other user.");
             }
 
             var profitToPatch = _mapper.Map<ProfitUpdateDto>(profitModelFromRepo);
@@ -105,6 +124,11 @@ namespace MyBudgetAPI.Data
             if (profit is null)
             {
                 throw new NotFoundException("Profit not found.");
+            }
+
+            if (profit.UserId != _userContextService.GetUserId)
+            {
+                throw new ForbiddenException("Profit of other user.");
             }
 
             profit.Amount = profitUpdateDto.Amount;

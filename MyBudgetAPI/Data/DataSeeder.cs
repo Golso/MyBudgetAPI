@@ -19,19 +19,19 @@ namespace MyBudgetAPI.Data
         {
             if (_dbContext.Database.CanConnect())
             {
-                if (!_dbContext.Expenses.Any())
-                {
-                    var expenses = GetExpenses();
-                    _dbContext.Expenses.AddRange(expenses);
-                    _dbContext.SaveChanges();
-                }
+                //if (!_dbContext.Expenses.Any())
+                //{
+                //    var expenses = GetExpenses();
+                //    _dbContext.Expenses.AddRange(expenses);
+                //    _dbContext.SaveChanges();
+                //}
 
-                if (!_dbContext.Profits.Any())
-                {
-                    var profits = GetProfits();
-                    _dbContext.Profits.AddRange(profits);
-                    _dbContext.SaveChanges();
-                }
+                //if (!_dbContext.Profits.Any())
+                //{
+                //    var profits = GetProfits();
+                //    _dbContext.Profits.AddRange(profits);
+                //    _dbContext.SaveChanges();
+                //}
 
                 if (!_dbContext.Roles.Any())
                 {

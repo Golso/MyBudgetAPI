@@ -35,6 +35,11 @@ namespace MyBudgetAPI.Middleware
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync(badRequestException.Message);
             }
+            catch (ForbiddenException forbiddenException)
+            {
+                context.Response.StatusCode = 403;
+                await context.Response.WriteAsync(forbiddenException.Message);
+            }
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
