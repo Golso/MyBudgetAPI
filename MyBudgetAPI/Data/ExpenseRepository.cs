@@ -28,8 +28,6 @@ namespace MyBudgetAPI.Data
 
         public IEnumerable<ExpenseReadDto> GetAllExpenses()
         {
-            //var expenses = _context.Expenses.ToList();
-
             var expenses = _context.Expenses.Where(e => e.UserId == _userContextService.GetUserId).ToList();
             
             return _mapper.Map<List<ExpenseReadDto>>(expenses);
