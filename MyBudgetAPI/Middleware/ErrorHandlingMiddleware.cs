@@ -2,8 +2,6 @@
 using Microsoft.Extensions.Logging;
 using MyBudgetAPI.Exceptions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyBudgetAPI.Middleware

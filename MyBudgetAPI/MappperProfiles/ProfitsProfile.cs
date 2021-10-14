@@ -1,16 +1,12 @@
 ﻿using AutoMapper;
 using MyBudgetAPI.Dtos;
 using MyBudgetAPI.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MyBudgetAPI.MappperProfiles
 {
     public class ProfitsProfile : Profile
     {
-        public ProfitsProfile() 
+        public ProfitsProfile()
         {
             CreateMap<Profit, ProfitReadDto>();
             CreateMap<ProfitCreateDto, Profit>();

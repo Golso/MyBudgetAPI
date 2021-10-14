@@ -1,15 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.Extensions.Logging;
+using MyBudgetAPI.Data.Interfaces;
 using MyBudgetAPI.Dtos;
 using MyBudgetAPI.Exceptions;
 using MyBudgetAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using MyBudgetAPI.Data.Interfaces;
 
 namespace MyBudgetAPI.Data
 {
@@ -29,7 +26,7 @@ namespace MyBudgetAPI.Data
         public IEnumerable<ExpenseReadDto> GetAllExpenses()
         {
             var expenses = _context.Expenses.Where(e => e.UserId == _userContextService.GetUserId).ToList();
-            
+
             return _mapper.Map<List<ExpenseReadDto>>(expenses);
         }
 

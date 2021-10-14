@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using MyBudgetAPI.Data.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace MyBudgetAPI.Data
 {

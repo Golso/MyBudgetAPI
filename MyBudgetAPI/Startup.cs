@@ -2,15 +2,11 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using MyBudgetAPI.Data;
 using MyBudgetAPI.Data.Interfaces;
 using MyBudgetAPI.Dtos;
@@ -19,10 +15,6 @@ using MyBudgetAPI.Models;
 using MyBudgetAPI.Models.Validators;
 using Newtonsoft.Json.Serialization;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyBudgetAPI
 {
@@ -43,7 +35,6 @@ namespace MyBudgetAPI
             Configuration.GetSection("Authentication").Bind(authenticationSettings);
 
             services.AddSingleton(authenticationSettings);
-
             services.ConfigureAuthenticationAndJwtBearer(authenticationSettings);
 
             services.AddDbContext<BudgetDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DbConection")));
@@ -52,15 +43,17 @@ namespace MyBudgetAPI
                 s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             }).AddFluentValidation();
             services.AddScoped<DataSeeder>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
             services.AddScoped<IProfitRepository, ProfitRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddScoped<IUserContextService, UserContextService>();
             services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
+
             services.AddScoped<ErrorHandlingMiddleware>();
             services.AddScoped<RequestTimeMiddleware>();
-            services.AddScoped<IUserContextService, UserContextService>();
             services.AddHttpContextAccessor();
             services.AddSwaggerGen();
         }

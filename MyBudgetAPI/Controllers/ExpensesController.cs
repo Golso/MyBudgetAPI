@@ -1,15 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MyBudgetAPI.Data;
 using MyBudgetAPI.Dtos;
-using MyBudgetAPI.Exceptions;
-using MyBudgetAPI.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MyBudgetAPI.Controllers
 {
@@ -19,7 +13,7 @@ namespace MyBudgetAPI.Controllers
     public class ExpensesController : ControllerBase
     {
         private readonly IExpenseRepository _repository;
-        
+
         public ExpensesController(IExpenseRepository reposiory)
         {
             _repository = reposiory;

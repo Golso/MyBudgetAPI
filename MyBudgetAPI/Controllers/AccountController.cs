@@ -3,10 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyBudgetAPI.Data.Interfaces;
 using MyBudgetAPI.Dtos;
 using MyBudgetAPI.Dtos.UserDto;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MyBudgetAPI.Controllers
 {
