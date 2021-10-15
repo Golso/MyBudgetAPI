@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyBudgetAPI.Data;
 using MyBudgetAPI.Dtos;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MyBudgetAPI.Controllers
 {
@@ -14,52 +15,52 @@ namespace MyBudgetAPI.Controllers
     {
         private readonly IExpenseRepository _repository;
 
-        public ExpensesController(IExpenseRepository reposiory)
+        public ExpensesController(IExpenseRepository repository)
         {
-            _repository = reposiory;
+            _repository = repository;
         }
 
         //GET /api/expenses
         [HttpGet]
-        public ActionResult<IEnumerable<ExpenseReadDto>> GetAllExpenses()
+        public async Task<ActionResult<IEnumerable<ExpenseReadDto>>> GetAllExpenses()
         {
-            var expenses = _repository.GetAllExpenses();
+            var expenses = await _repository.GetAllExpenses();
 
             return Ok(expenses);
         }
 
         //GET /api/expenses/{id}
         [HttpGet("{id}")]
-        public ActionResult<ExpenseReadDto> GetExpenseById([FromRoute] int id)
+        public async Task<ActionResult<ExpenseReadDto>> GetExpenseById([FromRoute] int id)
         {
-            var expense = _repository.GetExpenseById(id);
+            var expense = await _repository.GetExpenseById(id);
 
             return Ok(expense);
         }
 
         //POST /api/expenses
         [HttpPost]
-        public ActionResult CreateExpense([FromBody] ExpenseCreateDto expenseCreateDto)
+        public async Task<ActionResult> CreateExpense([FromBody] ExpenseCreateDto expenseCreateDto)
         {
-            var id = _repository.CreateExpense(expenseCreateDto);
+            var id = await _repository.CreateExpense(expenseCreateDto);
 
             return Created($"/api/expenses/{id}", null);
         }
 
         //DELETE /api/expense/{id}
         [HttpDelete("{id}")]
-        public ActionResult DeleteExpense([FromRoute] int id)
+        public async Task<ActionResult> DeleteExpense([FromRoute] int id)
         {
-            _repository.DeleteExpense(id);
+            await _repository.DeleteExpense(id);
 
             return NoContent();
         }
 
         //PUT /api/expenses/{id}
         [HttpPut("{id}")]
-        public ActionResult UpdateExpense([FromRoute] int id, [FromBody] ExpenseUpdateDto expenseUpdateDto)
+        public async Task<ActionResult> UpdateExpense([FromRoute] int id, [FromBody] ExpenseUpdateDto expenseUpdateDto)
         {
-            _repository.UpdateExpense(id, expenseUpdateDto);
+            await _repository.UpdateExpense(id, expenseUpdateDto);
 
             return NoContent();
         }
@@ -67,9 +68,9 @@ namespace MyBudgetAPI.Controllers
 
         //PATCH /api/expenses/{id}
         [HttpPatch("{id}")]
-        public ActionResult PartialExpenseUpdate([FromRoute] int id, [FromBody] JsonPatchDocument<ExpenseUpdateDto> patchDocument)
+        public async Task<ActionResult> PartialExpenseUpdate([FromRoute] int id, [FromBody] JsonPatchDocument<ExpenseUpdateDto> patchDocument)
         {
-            _repository.PartialUpdateExpense(id, patchDocument);
+            await _repository.PartialUpdateExpense(id, patchDocument);
 
             return NoContent();
         }

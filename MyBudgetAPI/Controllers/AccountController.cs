@@ -4,6 +4,7 @@ using MyBudgetAPI.Data.Interfaces;
 using MyBudgetAPI.Dtos;
 using MyBudgetAPI.Dtos.UserDto;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MyBudgetAPI.Controllers
 {
@@ -35,9 +36,9 @@ namespace MyBudgetAPI.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public ActionResult<IEnumerable<UserReadDto>> GetAllUsers()
+        public async Task<ActionResult<IEnumerable<UserReadDto>>> GetAllUsers()
         {
-            var users = _repository.GetAllUsers();
+            var users = await _repository.GetAllUsers();
 
             return Ok(users);
         }

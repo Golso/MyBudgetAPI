@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyBudgetAPI.Data;
 using MyBudgetAPI.Dtos;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MyBudgetAPI.Controllers
 {
@@ -21,45 +22,45 @@ namespace MyBudgetAPI.Controllers
 
         //GET /api/profits
         [HttpGet]
-        public ActionResult<IEnumerable<ProfitReadDto>> GetProfits()
+        public async Task<ActionResult<IEnumerable<ProfitReadDto>>> GetProfits()
         {
-            var profits = _repository.GetAllProfits();
+            var profits = await _repository.GetAllProfits();
 
             return Ok(profits);
         }
 
         //GET /api/profits/{id}
         [HttpGet("{id}")]
-        public ActionResult<ProfitReadDto> GetProfitById([FromRoute] int id)
+        public async Task<ActionResult<ProfitReadDto>> GetProfitById([FromRoute] int id)
         {
-            var profit = _repository.GetProfitById(id);
+            var profit = await _repository.GetProfitById(id);
 
             return Ok(profit);
         }
 
         //PUT /api/profits
         [HttpPost]
-        public ActionResult CreateProfit([FromBody] ProfitCreateDto profitCreateDto)
+        public async Task<ActionResult> CreateProfit([FromBody] ProfitCreateDto profitCreateDto)
         {
-            var id = _repository.CreateProfit(profitCreateDto);
+            var id = await _repository.CreateProfit(profitCreateDto);
 
             return Created($"/api/profits/{id}", null);
         }
 
         //DELETE /api/profits/{id}
         [HttpDelete("{id}")]
-        public ActionResult DeleteProfit([FromRoute] int id)
+        public async Task<ActionResult> DeleteProfit([FromRoute] int id)
         {
-            _repository.DeleteProfit(id);
+           await _repository.DeleteProfit(id);
 
             return NoContent();
         }
 
         //PUT /api/profit/{id}
         [HttpPut("{id}")]
-        public ActionResult UpdateProfit([FromRoute] int id, [FromBody] ProfitUpdateDto profitUpdateDto)
+        public async Task<ActionResult> UpdateProfit([FromRoute] int id, [FromBody] ProfitUpdateDto profitUpdateDto)
         {
-            _repository.UpdateProfit(id, profitUpdateDto);
+            await _repository.UpdateProfit(id, profitUpdateDto);
 
             return NoContent();
         }
@@ -67,9 +68,9 @@ namespace MyBudgetAPI.Controllers
 
         //PATCH /api/profit/{id}
         [HttpPatch("{id}")]
-        public ActionResult PartialProfitUpdate([FromRoute] int id, [FromBody] JsonPatchDocument<ProfitUpdateDto> patchDocument)
+        public async Task<ActionResult> PartialProfitUpdate([FromRoute] int id, [FromBody] JsonPatchDocument<ProfitUpdateDto> patchDocument)
         {
-            _repository.PartialUpdateProfit(id, patchDocument);
+            await _repository.PartialUpdateProfit(id, patchDocument);
 
             return NoContent();
         }

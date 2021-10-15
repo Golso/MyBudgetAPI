@@ -1,18 +1,11 @@
-using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyBudgetAPI.Data;
-using MyBudgetAPI.Data.Interfaces;
-using MyBudgetAPI.Dtos;
 using MyBudgetAPI.Middleware;
-using MyBudgetAPI.Models;
-using MyBudgetAPI.Models.Validators;
 using Newtonsoft.Json.Serialization;
 using System;
 
@@ -37,7 +30,7 @@ namespace MyBudgetAPI
             services.AddSingleton(authenticationSettings);
             services.ConfigureAuthenticationAndJwtBearer(authenticationSettings);
 
-            services.AddDbContext<BudgetDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DbConection")));
+            services.AddDb(Configuration);
             services.AddControllers().AddNewtonsoftJson(s =>
             {
                 s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -45,15 +38,9 @@ namespace MyBudgetAPI
             services.AddScoped<DataSeeder>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            services.AddScoped<IExpenseRepository, ExpenseRepository>();
-            services.AddScoped<IProfitRepository, ProfitRepository>();
-            services.AddScoped<IAccountRepository, AccountRepository>();
-            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-            services.AddScoped<IUserContextService, UserContextService>();
-            services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
+            services.AddDependencies();
+            services.AddMiddleware();
 
-            services.AddScoped<ErrorHandlingMiddleware>();
-            services.AddScoped<RequestTimeMiddleware>();
             services.AddHttpContextAccessor();
             services.AddSwaggerGen();
         }

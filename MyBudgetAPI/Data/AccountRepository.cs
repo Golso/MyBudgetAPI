@@ -13,6 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MyBudgetAPI.Data
 {
@@ -75,9 +76,9 @@ namespace MyBudgetAPI.Data
             return tokenHandler.WriteToken(token);
         }
 
-        public IEnumerable<UserReadDto> GetAllUsers()
+        public async Task<IEnumerable<UserReadDto>> GetAllUsers()
         {
-            var users = _context.Users.ToList();
+            var users = await _context.Users.ToListAsync();
 
             return _mapper.Map<List<UserReadDto>>(users);
         }

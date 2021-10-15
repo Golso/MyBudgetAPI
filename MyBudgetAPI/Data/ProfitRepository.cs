@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
 using MyBudgetAPI.Data.Interfaces;
 using MyBudgetAPI.Dtos;
 using MyBudgetAPI.Exceptions;
@@ -7,6 +8,7 @@ using MyBudgetAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MyBudgetAPI.Data
 {
@@ -23,7 +25,7 @@ namespace MyBudgetAPI.Data
             _userContextService = userContextService;
         }
 
-        public int CreateProfit(ProfitCreateDto profitCreateDto)
+        public async Task<int> CreateProfit(ProfitCreateDto profitCreateDto)
         {
             if (profitCreateDto.Amount <= 0)
             {
@@ -36,15 +38,15 @@ namespace MyBudgetAPI.Data
 
             var profit = _mapper.Map<Profit>(profitCreateDto);
             profit.UserId = _userContextService.GetUserId;
-            _context.Profits.Add(profit);
-            _context.SaveChanges();
+            await _context.Profits.AddAsync(profit);
+            await _context.SaveChangesAsync();
 
             return profit.Id;
         }
 
-        public void DeleteProfit(int id)
+        public async Task DeleteProfit(int id)
         {
-            var profit = _context.Profits.Find(id);
+            var profit = await _context.Profits.FindAsync(id);
 
             if (profit is null)
             {
@@ -57,19 +59,19 @@ namespace MyBudgetAPI.Data
             }
 
             _context.Profits.Remove(profit);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public IEnumerable<ProfitReadDto> GetAllProfits()
+        public async Task<IEnumerable<ProfitReadDto>> GetAllProfits()
         {
-            var profits = _context.Profits.Where(p => p.UserId == _userContextService.GetUserId).ToList();
+            var profits = await _context.Profits.Where(p => p.UserId == _userContextService.GetUserId).ToListAsync();
 
             return _mapper.Map<List<ProfitReadDto>>(profits);
         }
 
-        public ProfitReadDto GetProfitById(int id)
+        public async Task<ProfitReadDto> GetProfitById(int id)
         {
-            var profit = _context.Profits.Find(id);
+            var profit = await _context.Profits.FindAsync(id);
 
             if (profit is null)
             {
@@ -84,14 +86,14 @@ namespace MyBudgetAPI.Data
             return _mapper.Map<ProfitReadDto>(profit);
         }
 
-        public void PartialUpdateProfit(int id, JsonPatchDocument<ProfitUpdateDto> patchDocument)
+        public async Task PartialUpdateProfit(int id, JsonPatchDocument<ProfitUpdateDto> patchDocument)
         {
             if (patchDocument is null)
             {
                 throw new BadRequestException("patchDocument object is null.");
             }
 
-            var profitModelFromRepo = _context.Profits.Find(id);
+            var profitModelFromRepo = await _context.Profits.FindAsync(id);
 
             if (profitModelFromRepo is null)
             {
@@ -108,17 +110,17 @@ namespace MyBudgetAPI.Data
 
             _mapper.Map(profitToPatch, profitModelFromRepo);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void UpdateProfit(int id, ProfitUpdateDto profitUpdateDto)
+        public async Task UpdateProfit(int id, ProfitUpdateDto profitUpdateDto)
         {
             if (profitUpdateDto.Amount <= 0)
             {
                 throw new BadRequestException("Amount is required and it should be positive number.");
             }
 
-            var profit = _context.Profits.Find(id);
+            var profit = await _context.Profits.FindAsync(id);
 
             if (profit is null)
             {
@@ -134,7 +136,7 @@ namespace MyBudgetAPI.Data
             profit.Source = profitUpdateDto.Source;
             profit.Description = profitUpdateDto.Description;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

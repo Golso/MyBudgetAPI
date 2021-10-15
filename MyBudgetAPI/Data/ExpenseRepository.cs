@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
 using MyBudgetAPI.Data.Interfaces;
 using MyBudgetAPI.Dtos;
 using MyBudgetAPI.Exceptions;
@@ -7,6 +8,7 @@ using MyBudgetAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MyBudgetAPI.Data
 {
@@ -23,16 +25,16 @@ namespace MyBudgetAPI.Data
             _userContextService = userContextService;
         }
 
-        public IEnumerable<ExpenseReadDto> GetAllExpenses()
+        public async Task<IEnumerable<ExpenseReadDto>> GetAllExpenses()
         {
-            var expenses = _context.Expenses.Where(e => e.UserId == _userContextService.GetUserId).ToList();
+            var expenses = await _context.Expenses.Where(e => e.UserId == _userContextService.GetUserId).ToListAsync();
 
             return _mapper.Map<List<ExpenseReadDto>>(expenses);
         }
 
-        public ExpenseReadDto GetExpenseById(int id)
+        public async Task<ExpenseReadDto> GetExpenseById(int id)
         {
-            var expense = _context.Expenses.Find(id);
+            var expense = await _context.Expenses.FindAsync(id);
 
             if (expense is null)
             {
@@ -47,7 +49,7 @@ namespace MyBudgetAPI.Data
             return _mapper.Map<ExpenseReadDto>(expense);
         }
 
-        public int CreateExpense(ExpenseCreateDto dto)
+        public async Task<int> CreateExpense(ExpenseCreateDto dto)
         {
             //No idea why required attribute is not working
             if (dto.Amount <= 0)
@@ -61,15 +63,15 @@ namespace MyBudgetAPI.Data
 
             var expense = _mapper.Map<Expense>(dto);
             expense.UserId = _userContextService.GetUserId;
-            _context.Expenses.Add(expense);
-            _context.SaveChanges();
+            await _context.Expenses.AddAsync(expense);
+            await _context.SaveChangesAsync();
 
             return expense.Id;
         }
 
-        public void DeleteExpense(int id)
+        public async Task DeleteExpense(int id)
         {
-            var expense = _context.Expenses.Find(id);
+            var expense = await _context.Expenses.FindAsync(id);
 
             if (expense is null)
             {
@@ -82,17 +84,17 @@ namespace MyBudgetAPI.Data
             }
 
             _context.Expenses.Remove(expense);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void UpdateExpense(int id, ExpenseUpdateDto expenseUpdateDto)
+        public async Task UpdateExpense(int id, ExpenseUpdateDto expenseUpdateDto)
         {
             if (expenseUpdateDto.Amount <= 0)
             {
                 throw new BadRequestException("Amount is required and it should be positive number.");
             }
 
-            var expense = _context.Expenses.Find(id);
+            var expense = await _context.Expenses.FindAsync(id);
 
             if (expense is null)
             {
@@ -108,17 +110,17 @@ namespace MyBudgetAPI.Data
             expense.Category = expenseUpdateDto.Category;
             expense.Description = expenseUpdateDto.Description;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void PartialUpdateExpense(int id, JsonPatchDocument<ExpenseUpdateDto> patchDocument)
+        public async Task PartialUpdateExpense(int id, JsonPatchDocument<ExpenseUpdateDto> patchDocument)
         {
             if (patchDocument is null)
             {
                 throw new BadRequestException("patchDocument object is null.");
             }
 
-            var expenseModelFromRepo = _context.Expenses.Find(id);
+            var expenseModelFromRepo = await _context.Expenses.FindAsync(id);
 
             if (expenseModelFromRepo is null)
             {
@@ -135,7 +137,7 @@ namespace MyBudgetAPI.Data
 
             _mapper.Map(expenseToPatch, expenseModelFromRepo);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }
