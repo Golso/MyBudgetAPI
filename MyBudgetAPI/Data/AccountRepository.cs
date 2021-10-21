@@ -20,84 +20,30 @@ namespace MyBudgetAPI.Data
     public class AccountRepository : IAccountRepository
     {
         private readonly BudgetDbContext _context;
-        private readonly IMapper _mapper;
-        private readonly IPasswordHasher<User> _passwordHasher;
-        private readonly AuthenticationSettings _authenticationSettings;
 
-        public AccountRepository(BudgetDbContext context, IMapper mapper, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings)
+        public AccountRepository(BudgetDbContext context)
         {
             _context = context;
-            _mapper = mapper;
-            _passwordHasher = passwordHasher;
-            _authenticationSettings = authenticationSettings;
         }
 
-        public string GenerateJwt(LoginDto dto)
+        public async Task<User> GetUserByEmail(string email)
         {
-            var user = _context.Users
+            var _user = await _context.Users
                 .Include(u => u.Role)
-                .FirstOrDefault(u => u.Email == dto.Email);
+                .FirstOrDefaultAsync(u => u.Email == email);
 
-            if (user is null)
-            {
-                throw new BadRequestException("Invalid username or password");
-            }
-
-            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
-            if (result == PasswordVerificationResult.Failed)
-            {
-                throw new BadRequestException("Invalid username or password");
-            }
-
-            var claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
-                new Claim(ClaimTypes.Role, $"{user.Role.Name}")
-            };
-
-            if (user.DateOfBirth.HasValue)
-            {
-                var claim = new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("yyyy-MM-dd"));
-                claims.Add(claim);
-            }
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtKey));
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(_authenticationSettings.JwtExpireDays);
-
-            var token = new JwtSecurityToken(_authenticationSettings.JwtIssuer,
-                _authenticationSettings.JwtIssuer,
-                claims,
-                expires: expires,
-                signingCredentials: cred);
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            return tokenHandler.WriteToken(token);
+            return _user;
         }
 
-        public async Task<IEnumerable<UserReadDto>> GetAllUsers()
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            var users = await _context.Users.ToListAsync();
-
-            return _mapper.Map<List<UserReadDto>>(users);
+            return await _context.Users.ToListAsync();
         }
 
-        public void RegisterUser(RegisterUserDto dto)
+        public async Task RegisterUserAsync(User user)
         {
-            var newUser = new User()
-            {
-                Email = dto.Email,
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                DateOfBirth = dto.DateOfBirth,
-                RoleId = dto.RoleId
-            };
-
-            var hashedPassword = _passwordHasher.HashPassword(newUser, dto.Password);
-            newUser.PasswordHash = hashedPassword;
-            _context.Users.Add(newUser);
-            _context.SaveChanges();
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -13,24 +13,27 @@ namespace MyBudgetAPI.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountRepository _repository;
+        private readonly IAccountService _service;
 
-        public AccountController(IAccountRepository reposiory)
+        public AccountController(IAccountRepository reposiory, IAccountService service)
         {
             _repository = reposiory;
+            _service = service;
         }
 
         [HttpPost("register")]
-        public ActionResult RegisterUser([FromBody] RegisterUserDto dto)
+        public async Task<ActionResult> RegisterUser([FromBody] RegisterUserDto dto)
         {
-            _repository.RegisterUser(dto);
+            await _service.RegisterUserAsync(dto);
 
             return Ok();
         }
 
         [HttpPost("login")]
-        public ActionResult Login([FromBody] LoginDto dto)
+        public async Task<ActionResult> Login([FromBody] LoginDto dto)
         {
-            string token = _repository.GenerateJwt(dto);
+            string token = await _service.GenerateJwt(dto);
+
             return Ok(token);
         }
 
@@ -38,7 +41,7 @@ namespace MyBudgetAPI.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<UserReadDto>>> GetAllUsers()
         {
-            var users = await _repository.GetAllUsers();
+            var users = await _service.GetAllUsersAsync();
 
             return Ok(users);
         }

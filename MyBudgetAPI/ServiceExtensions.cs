@@ -10,6 +10,7 @@ using MyBudgetAPI.Dtos;
 using MyBudgetAPI.Middleware;
 using MyBudgetAPI.Models;
 using MyBudgetAPI.Models.Validators;
+using MyBudgetAPI.Services;
 using System.Text;
 
 namespace MyBudgetAPI
@@ -41,8 +42,12 @@ namespace MyBudgetAPI
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
             services.AddScoped<IProfitRepository, ProfitRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
-            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
             services.AddScoped<IUserContextService, UserContextService>();
+            services.AddScoped<IAccountService, AccountService>();
+
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
             services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
         }
 
