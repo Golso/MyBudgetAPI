@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using MyBudgetAPI.Dtos;
+using MyBudgetAPI.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,11 +8,10 @@ namespace MyBudgetAPI.Data
 {
     public interface IExpenseRepository
     {
-        Task<IEnumerable<ExpenseReadDto>> GetAllExpenses();
-        Task<ExpenseReadDto> GetExpenseById(int id);
-        Task<int> CreateExpense(ExpenseCreateDto expense);
-        Task DeleteExpense(int id);
-        Task UpdateExpense(int id, ExpenseUpdateDto expenseUpdateDto);
-        Task PartialUpdateExpense(int id, JsonPatchDocument<ExpenseUpdateDto> patchDocument);
+        Task<IEnumerable<Expense>> GetAllExpenses(int userId);
+        Task<Expense> GetExpenseById(int id);
+        Task<int> CreateExpense(Expense expense);
+        Task DeleteExpense(Expense expense);
+        Task UpdateExpense();
     }
 }

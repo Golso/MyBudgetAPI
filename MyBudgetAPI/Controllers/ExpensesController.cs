@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MyBudgetAPI.Data;
+using MyBudgetAPI.Data.Interfaces;
 using MyBudgetAPI.Dtos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,18 +14,18 @@ namespace MyBudgetAPI.Controllers
     [Authorize]
     public class ExpensesController : ControllerBase
     {
-        private readonly IExpenseRepository _repository;
+        private readonly IExpenseService _service;
 
-        public ExpensesController(IExpenseRepository repository)
+        public ExpensesController(IExpenseService service)
         {
-            _repository = repository;
+            _service = service;
         }
 
         //GET /api/expenses
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ExpenseReadDto>>> GetAllExpenses()
         {
-            var expenses = await _repository.GetAllExpenses();
+            var expenses = await _service.GetAllExpenses();
 
             return Ok(expenses);
         }
@@ -33,7 +34,7 @@ namespace MyBudgetAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ExpenseReadDto>> GetExpenseById([FromRoute] int id)
         {
-            var expense = await _repository.GetExpenseById(id);
+            var expense = await _service.GetExpenseById(id);
 
             return Ok(expense);
         }
@@ -42,7 +43,7 @@ namespace MyBudgetAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateExpense([FromBody] ExpenseCreateDto expenseCreateDto)
         {
-            var id = await _repository.CreateExpense(expenseCreateDto);
+            var id = await _service.CreateExpense(expenseCreateDto);
 
             return Created($"/api/expenses/{id}", null);
         }
@@ -51,7 +52,7 @@ namespace MyBudgetAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteExpense([FromRoute] int id)
         {
-            await _repository.DeleteExpense(id);
+            await _service.DeleteExpense(id);
 
             return NoContent();
         }
@@ -60,7 +61,7 @@ namespace MyBudgetAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateExpense([FromRoute] int id, [FromBody] ExpenseUpdateDto expenseUpdateDto)
         {
-            await _repository.UpdateExpense(id, expenseUpdateDto);
+            await _service.UpdateExpense(id, expenseUpdateDto);
 
             return NoContent();
         }
@@ -70,7 +71,7 @@ namespace MyBudgetAPI.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult> PartialExpenseUpdate([FromRoute] int id, [FromBody] JsonPatchDocument<ExpenseUpdateDto> patchDocument)
         {
-            await _repository.PartialUpdateExpense(id, patchDocument);
+            await _service.PartialUpdateExpense(id, patchDocument);
 
             return NoContent();
         }
