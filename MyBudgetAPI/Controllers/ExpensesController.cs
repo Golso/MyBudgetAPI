@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using MyBudgetAPI.Data.Interfaces;
-using MyBudgetAPI.Dtos;
+using MyBudgetApi.Data.Abstractions;
+using MyBudgetApi.Data.Dtos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MyBudgetAPI.Controllers
+namespace MyBudgetApi.Controllers
 {
     [Route("api/expenses")]
     [ApiController]

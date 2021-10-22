@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MyBudgetAPI.Data;
-using MyBudgetAPI.Middleware;
+using MyBudgetApi.Data;
+using MyBudgetApi.Middleware;
 using Newtonsoft.Json.Serialization;
 using System;
 
-namespace MyBudgetAPI
+namespace MyBudgetApi
 {
     public class Startup
     {

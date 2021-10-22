@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using NLog.Web;
 
-namespace MyBudgetAPI
+namespace MyBudgetApi
 {
     public class Program
     {

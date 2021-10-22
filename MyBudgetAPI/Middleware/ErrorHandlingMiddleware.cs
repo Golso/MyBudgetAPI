@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using MyBudgetAPI.Exceptions;
+using MyBudgetApi.Data.Exceptions;
 using System;
 using System.Threading.Tasks;
 
-namespace MyBudgetAPI.Middleware
+namespace MyBudgetApi.Middleware
 {
     public class ErrorHandlingMiddleware : IMiddleware
     {

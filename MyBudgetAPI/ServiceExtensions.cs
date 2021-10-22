@@ -4,16 +4,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using MyBudgetAPI.Data;
-using MyBudgetAPI.Data.Interfaces;
-using MyBudgetAPI.Dtos;
-using MyBudgetAPI.Middleware;
-using MyBudgetAPI.Models;
-using MyBudgetAPI.Models.Validators;
-using MyBudgetAPI.Services;
+using MyBudgetApi.Data;
+using MyBudgetApi.Data.Abstractions;
+using MyBudgetApi.Data.Context;
+using MyBudgetApi.Data.Dtos;
+using MyBudgetApi.Data.Models;
+using MyBudgetApi.Data.Repositories;
+using MyBudgetApi.Middleware;
 using System.Text;
 
-namespace MyBudgetAPI
+namespace MyBudgetApi
 {
     public static class ServiceExtensions
     {
@@ -43,6 +43,8 @@ namespace MyBudgetAPI
             services.AddScoped<IProfitRepository, ProfitRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
 
+            services.AddScoped<IExpenseService, ExpenseService>();
+            services.AddScoped<IProfitService, ProfitService>();
             services.AddScoped<IUserContextService, UserContextService>();
             services.AddScoped<IAccountService, AccountService>();
 

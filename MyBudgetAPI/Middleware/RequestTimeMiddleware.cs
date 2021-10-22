@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace MyBudgetAPI.Middleware
+namespace MyBudgetApi.Middleware
 {
     public class RequestTimeMiddleware : IMiddleware
     {

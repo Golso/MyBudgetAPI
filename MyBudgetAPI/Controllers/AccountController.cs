@@ -1,23 +1,20 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MyBudgetAPI.Data.Interfaces;
-using MyBudgetAPI.Dtos;
-using MyBudgetAPI.Dtos.UserDto;
+using MyBudgetApi.Data.Abstractions;
+using MyBudgetApi.Data.Dtos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MyBudgetAPI.Controllers
+namespace MyBudgetApi.Controllers
 {
     [Route("api/account")]
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly IAccountRepository _repository;
         private readonly IAccountService _service;
 
-        public AccountController(IAccountRepository reposiory, IAccountService service)
+        public AccountController(IAccountService service)
         {
-            _repository = reposiory;
             _service = service;
         }
 

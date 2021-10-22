@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using MyBudgetAPI.Dtos;
-using MyBudgetAPI.Models;
+using MyBudgetApi.Data.Dtos;
+using MyBudgetApi.Data.Models;
 
-namespace MyBudgetAPI.MappperProfiles
+namespace MyBudgetApi.MappperProfiles
 {
     public class ExpensesProfile : Profile
     {
