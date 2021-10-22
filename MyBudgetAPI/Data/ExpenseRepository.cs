@@ -1,11 +1,5 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.EntityFrameworkCore;
-using MyBudgetAPI.Data.Interfaces;
-using MyBudgetAPI.Dtos;
-using MyBudgetAPI.Exceptions;
+﻿using Microsoft.EntityFrameworkCore;
 using MyBudgetAPI.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,21 +15,21 @@ namespace MyBudgetAPI.Data
             _context = context;
         }
 
-        public async Task<IEnumerable<Expense>> GetAllExpenses(int userId)
+        public async Task<IEnumerable<Expense>> GetAllExpensesAsync(int userId)
         {
             var expenses = await _context.Expenses.Where(e => e.UserId == userId).ToListAsync();
 
             return expenses;
         }
 
-        public async Task<Expense> GetExpenseById(int id)
+        public async Task<Expense> GetExpenseByIdAsync(int id)
         {
             var expense = await _context.Expenses.FindAsync(id);
 
             return expense;
         }
 
-        public async Task<int> CreateExpense(Expense expense)
+        public async Task<int> CreateExpenseAsync(Expense expense)
         {
             await _context.Expenses.AddAsync(expense);
             await _context.SaveChangesAsync();
@@ -43,13 +37,13 @@ namespace MyBudgetAPI.Data
             return expense.Id;
         }
 
-        public async Task DeleteExpense(Expense expense)
+        public async Task DeleteExpenseAsync(Expense expense)
         {
             _context.Expenses.Remove(expense);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateExpense()
+        public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
         }

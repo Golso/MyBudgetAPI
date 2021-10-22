@@ -7,7 +7,6 @@ using MyBudgetAPI.Exceptions;
 using MyBudgetAPI.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyBudgetAPI.Services
@@ -25,7 +24,7 @@ namespace MyBudgetAPI.Services
             _userContextService = userContextService;
         }
 
-        public async Task<int> CreateExpense(ExpenseCreateDto dto)
+        public async Task<int> CreateExpenseAsync(ExpenseCreateDto dto)
         {
             //No idea why required attribute is not working
             if (dto.Amount <= 0)
@@ -40,12 +39,12 @@ namespace MyBudgetAPI.Services
             var expense = _mapper.Map<Expense>(dto);
             expense.UserId = _userContextService.GetUserId;
 
-            return await _repository.CreateExpense(expense);
+            return await _repository.CreateExpenseAsync(expense);
         }
 
-        public async Task DeleteExpense(int id)
+        public async Task DeleteExpenseAsync(int id)
         {
-            var expense = await _repository.GetExpenseById(id);
+            var expense = await _repository.GetExpenseByIdAsync(id);
 
             if (expense is null)
             {
@@ -57,20 +56,20 @@ namespace MyBudgetAPI.Services
                 throw new ForbiddenException("Expense of other user.");
             }
 
-            await _repository.DeleteExpense(expense);
+            await _repository.DeleteExpenseAsync(expense);
         }
 
-        public async Task<IEnumerable<ExpenseReadDto>> GetAllExpenses()
+        public async Task<IEnumerable<ExpenseReadDto>> GetAllExpensesAsync()
         {
             var userId = _userContextService.GetUserId;
-            var expenses = await _repository.GetAllExpenses(userId);
+            var expenses = await _repository.GetAllExpensesAsync(userId);
 
             return _mapper.Map<List<ExpenseReadDto>>(expenses);
         }
 
-        public async Task<ExpenseReadDto> GetExpenseById(int id)
+        public async Task<ExpenseReadDto> GetExpenseByIdAsync(int id)
         {
-            var expense = await _repository.GetExpenseById(id);
+            var expense = await _repository.GetExpenseByIdAsync(id);
 
             if (expense is null)
             {
@@ -85,14 +84,14 @@ namespace MyBudgetAPI.Services
             return _mapper.Map<ExpenseReadDto>(expense);
         }
 
-        public async Task PartialUpdateExpense(int id, JsonPatchDocument<ExpenseUpdateDto> patchDocument)
+        public async Task PartialUpdateExpenseAsync(int id, JsonPatchDocument<ExpenseUpdateDto> patchDocument)
         {
             if (patchDocument is null)
             {
                 throw new BadRequestException("patchDocument object is null.");
             }
 
-            var expenseModelFromRepo = await _repository.GetExpenseById(id);
+            var expenseModelFromRepo = await _repository.GetExpenseByIdAsync(id);
 
             if (expenseModelFromRepo is null)
             {
@@ -109,17 +108,17 @@ namespace MyBudgetAPI.Services
 
             _mapper.Map(expenseToPatch, expenseModelFromRepo);
 
-            await _repository.UpdateExpense();
+            await _repository.SaveChangesAsync();
         }
 
-        public async Task UpdateExpense(int id, ExpenseUpdateDto expenseUpdateDto)
+        public async Task UpdateExpenseAsync(int id, ExpenseUpdateDto expenseUpdateDto)
         {
             if (expenseUpdateDto.Amount <= 0)
             {
                 throw new BadRequestException("Amount is required and it should be positive number.");
             }
 
-            var expense = await _repository.GetExpenseById(id);
+            var expense = await _repository.GetExpenseByIdAsync(id);
 
             if (expense is null)
             {
@@ -135,7 +134,7 @@ namespace MyBudgetAPI.Services
             expense.Category = expenseUpdateDto.Category;
             expense.Description = expenseUpdateDto.Description;
 
-            await _repository.UpdateExpense();
+            await _repository.SaveChangesAsync();
         }
     }
 }

@@ -9,7 +9,6 @@ using MyBudgetAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,7 +32,7 @@ namespace MyBudgetAPI.Services
 
         public async Task<string> GenerateJwt(LoginDto dto)
         {
-            var user = await _accountRepository.GetUserByEmail(dto.Email);
+            var user = await _accountRepository.GetUserByEmailAsync(dto.Email);
 
             if (user is null)
             {

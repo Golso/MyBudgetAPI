@@ -1,18 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.EntityFrameworkCore;
 using MyBudgetAPI.Data.Interfaces;
-using MyBudgetAPI.Dtos;
-using MyBudgetAPI.Dtos.UserDto;
-using MyBudgetAPI.Exceptions;
 using MyBudgetAPI.Models;
-using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MyBudgetAPI.Data
@@ -26,7 +15,7 @@ namespace MyBudgetAPI.Data
             _context = context;
         }
 
-        public async Task<User> GetUserByEmail(string email)
+        public async Task<User> GetUserByEmailAsync(string email)
         {
             var _user = await _context.Users
                 .Include(u => u.Role)
