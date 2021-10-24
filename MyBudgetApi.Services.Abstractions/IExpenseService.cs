@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
+using MyBudgetApi.Core.Helpers;
+using MyBudgetApi.Core.Models;
 using MyBudgetApi.Data.Dtos;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MyBudgetApi.Data.Abstractions
 {
     public interface IExpenseService
     {
-        Task<IEnumerable<ExpenseReadDto>> GetAllExpensesAsync();
+        Task<PagedList<ExpenseReadDto>> GetAllExpensesAsync(ExpenseParameters expenseParameters);
         Task<ExpenseReadDto> GetExpenseByIdAsync(int id);
         Task<int> CreateExpenseAsync(ExpenseCreateDto expense);
         Task DeleteExpenseAsync(int id);

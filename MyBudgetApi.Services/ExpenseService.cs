@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using MyBudgetApi.Core.Helpers;
+using MyBudgetApi.Core.Models;
 using MyBudgetApi.Data.Abstractions;
 using MyBudgetApi.Data.Dtos;
 using MyBudgetApi.Data.Exceptions;
@@ -58,12 +60,15 @@ namespace MyBudgetApi.Data
             await _repository.DeleteExpenseAsync(expense);
         }
 
-        public async Task<IEnumerable<ExpenseReadDto>> GetAllExpensesAsync()
+        public async Task<PagedList<ExpenseReadDto>> GetAllExpensesAsync(ExpenseParameters expenseParameters)
         {
             var userId = _userContextService.GetUserId;
-            var expenses = await _repository.GetAllExpensesAsync(userId);
+            var expenses = await _repository.GetAllExpensesAsync(userId, expenseParameters);
+            var expenseList = expenses.Items;
+            var dtoList = _mapper.Map<List<ExpenseReadDto>>(expenseList);
+            var result = new PagedList<ExpenseReadDto>(dtoList, expenses.TotalCount, expenses.CurrentPage, expenses.PageSize);
 
-            return _mapper.Map<List<ExpenseReadDto>>(expenses);
+            return result;
         }
 
         public async Task<ExpenseReadDto> GetExpenseByIdAsync(int id)

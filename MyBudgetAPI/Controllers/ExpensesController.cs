@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using MyBudgetApi.Core.Models;
 using MyBudgetApi.Data.Abstractions;
 using MyBudgetApi.Data.Dtos;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -22,11 +24,23 @@ namespace MyBudgetApi.Controllers
 
         //GET /api/expenses
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ExpenseReadDto>>> GetAllExpenses()
+        public async Task<ActionResult<IEnumerable<ExpenseReadDto>>> GetAllExpenses([FromQuery] ExpenseParameters expenseParameters)
         {
-            var expenses = await _service.GetAllExpensesAsync();
+            var expenses = await _service.GetAllExpensesAsync(expenseParameters);
 
-            return Ok(expenses);
+            var metadata = new
+            {
+                expenses.TotalCount,
+                expenses.PageSize,
+                expenses.CurrentPage,
+                expenses.TotalPages,
+                expenses.HasNext,
+                expenses.HasPrevious
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return Ok(expenses.Items);
         }
 
         //GET /api/expenses/{id}

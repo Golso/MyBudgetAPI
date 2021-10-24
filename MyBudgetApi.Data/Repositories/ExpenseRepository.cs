@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MyBudgetApi.Core.Helpers;
+using MyBudgetApi.Core.Models;
 using MyBudgetApi.Data.Context;
 using MyBudgetApi.Data.Models;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,11 +16,13 @@ namespace MyBudgetApi.Data.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Expense>> GetAllExpensesAsync(int userId)
+        public async Task<PagedList<Expense>> GetAllExpensesAsync(int userId, ExpenseParameters expenseParameters)
         {
-            var expenses = await _context.Expenses.Where(e => e.UserId == userId).ToListAsync();
+            var expense = await PagedList<Expense>
+                .ToPagedList(_context.Expenses.Where(e => e.UserId == userId).OrderBy(e => e.Id),
+                expenseParameters.PageNumber, expenseParameters.PageSize);
 
-            return expenses;
+            return expense;
         }
 
         public async Task<Expense> GetExpenseByIdAsync(int id)
