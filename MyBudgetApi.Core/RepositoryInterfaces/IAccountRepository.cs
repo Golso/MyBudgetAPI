@@ -1,4 +1,6 @@
-﻿using MyBudgetApi.Data.Models;
+﻿using MyBudgetApi.Core.Helpers;
+using MyBudgetApi.Core.Models;
+using MyBudgetApi.Data.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,6 +10,6 @@ namespace MyBudgetApi.Data.Abstractions
     {
         Task RegisterUserAsync(User user);
         Task<User> GetUserByEmailAsync(string email);
-        Task<IEnumerable<User>> GetAllUsersAsync();
+        Task<PagedList<User>> GetAllUsersAsync(AccountParameters accountParameters);
     }
 }

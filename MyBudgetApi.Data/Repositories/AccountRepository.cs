@@ -1,8 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MyBudgetApi.Core.Helpers;
+using MyBudgetApi.Core.Models;
 using MyBudgetApi.Data.Abstractions;
 using MyBudgetApi.Data.Context;
 using MyBudgetApi.Data.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyBudgetApi.Data.Repositories
@@ -25,9 +28,14 @@ namespace MyBudgetApi.Data.Repositories
             return _user;
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<PagedList<User>> GetAllUsersAsync(AccountParameters accountParameters)
         {
-            return await _context.Users.ToListAsync();
+            var accounts = await PagedList<User>
+                .ToPagedList(_context.Users.OrderBy(e => e.Id),
+                accountParameters.PageNumber,
+                accountParameters.PageSize);
+
+            return accounts;
         }
 
         public async Task RegisterUserAsync(User user)

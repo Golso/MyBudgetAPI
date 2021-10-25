@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using MyBudgetApi.Core.Helpers;
+using MyBudgetApi.Core.Models;
 using MyBudgetApi.Data.Abstractions;
 using MyBudgetApi.Data.Dtos;
 using MyBudgetApi.Data.Exceptions;
@@ -71,11 +73,14 @@ namespace MyBudgetApi.Data
             return tokenHandler.WriteToken(token);
         }
 
-        public async Task<IEnumerable<UserReadDto>> GetAllUsersAsync()
+        public async Task<PagedList<UserReadDto>> GetAllUsersAsync(AccountParameters accountParameters)
         {
-            var users = await _accountRepository.GetAllUsersAsync();
+            var users = await _accountRepository.GetAllUsersAsync(accountParameters);
+            var userList = users.Items;
+            var dtoList = _mapper.Map<List<UserReadDto>>(userList);
+            var result = new PagedList<UserReadDto>(dtoList, users.TotalCount, users.CurrentPage, users.PageSize);
 
-            return _mapper.Map<List<UserReadDto>>(users);
+            return result;
         }
 
         public async Task RegisterUserAsync(RegisterUserDto dto)

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MyBudgetApi.Core.Models;
 using MyBudgetApi.Data.Abstractions;
 using MyBudgetApi.Data.Dtos;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -36,11 +38,23 @@ namespace MyBudgetApi.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<IEnumerable<UserReadDto>>> GetAllUsers()
+        public async Task<ActionResult<IEnumerable<UserReadDto>>> GetAllUsers([FromQuery] AccountParameters accountParameters)
         {
-            var users = await _service.GetAllUsersAsync();
+            var users = await _service.GetAllUsersAsync(accountParameters);
 
-            return Ok(users);
+            var metadata = new
+            {
+                users.TotalCount,
+                users.PageSize,
+                users.CurrentPage,
+                users.TotalPages,
+                users.HasNext,
+                users.HasPrevious
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return Ok(users.Items);
         }
     }
 }
