@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using MyBudgetApi.Core.Helpers;
+using MyBudgetApi.Core.Models;
 using MyBudgetApi.Data.Abstractions;
 using MyBudgetApi.Data.Dtos;
 using MyBudgetApi.Data.Exceptions;
@@ -57,12 +59,15 @@ namespace MyBudgetApi.Data
             await _repository.DeleteProfitAsync(profit);
         }
 
-        public async Task<IEnumerable<ProfitReadDto>> GetAllProfitsAsync()
+        public async Task<PagedList<ProfitReadDto>> GetAllProfitsAsync(ProfitParameters profitParameters)
         {
             var userId = _userContextService.GetUserId;
-            var profits = await _repository.GetAllProfitsAsync(userId);
+            var profits = await _repository.GetAllProfitsAsync(userId, profitParameters);
+            var profitList = profits.Items;
+            var dtoList = _mapper.Map<List<ProfitReadDto>>(profitList);
+            var result = new PagedList<ProfitReadDto>(dtoList, profits.TotalCount, profits.CurrentPage, profits.PageSize);
 
-            return _mapper.Map<List<ProfitReadDto>>(profits);
+            return result;
         }
 
         public async Task<ProfitReadDto> GetProfitByIdAsync(int id)
