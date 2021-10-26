@@ -19,7 +19,11 @@ namespace MyBudgetApi.Data.Repositories
         public async Task<PagedList<Expense>> GetAllExpensesAsync(int userId, ExpenseParameters expenseParameters)
         {
             var expense = await PagedList<Expense>
-                .ToPagedList(_context.Expenses.Where(e => e.UserId == userId).OrderBy(e => e.Id),
+                .ToPagedList(_context.Expenses
+                    .Where(e => e.UserId == userId 
+                        && e.Amount>= expenseParameters.MinAmount && e.Amount <= expenseParameters.MaxAmount
+                        && e.Date >= expenseParameters.MinDate && e.Date <= expenseParameters.MaxDate)
+                    .OrderBy(e => e.Id),
                 expenseParameters.PageNumber, expenseParameters.PageSize);
 
             return expense;

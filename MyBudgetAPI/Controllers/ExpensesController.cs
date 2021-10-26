@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyBudgetApi.Core.Models;
 using MyBudgetApi.Data.Abstractions;
 using MyBudgetApi.Data.Dtos;
+using MyBudgetApi.Data.Exceptions;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -26,6 +27,15 @@ namespace MyBudgetApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ExpenseReadDto>>> GetAllExpenses([FromQuery] ExpenseParameters expenseParameters)
         {
+            if (!expenseParameters.ValidAmountRange)
+            {
+                throw new BadRequestException("Max amount cannot be less than min amount.");
+            }
+            if (!expenseParameters.ValidDateRange)
+            {
+                throw new BadRequestException("Max date cannot be less than min date.");
+            }
+
             var expenses = await _service.GetAllExpensesAsync(expenseParameters);
 
             var metadata = new
