@@ -33,7 +33,10 @@ namespace MyBudgetApi.Data.Repositories
         public async Task<PagedList<Profit>> GetAllProfitsAsync(int userId, ProfitParameters profitParameters)
         {
             var profits = await PagedList<Profit>
-               .ToPagedList(_context.Profits.Where(e => e.UserId == userId).OrderBy(e => e.Id),
+               .ToPagedList(_context.Profits.Where(e => e.UserId == userId 
+               && e.Amount <= profitParameters.MaxAmount && e.Amount >= profitParameters.MinAmount
+               && e.Date <= profitParameters.MaxDate && e.Date >= profitParameters.MinDate
+               ).OrderBy(e => e.Id),
                profitParameters.PageNumber, profitParameters.PageSize);
 
             return profits;
