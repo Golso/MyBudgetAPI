@@ -40,11 +40,9 @@ namespace MyBudgetApi
         public static void AddDependencies(this IServiceCollection services)
         {
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
-            services.AddScoped<IProfitRepository, ProfitRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
 
             services.AddScoped<IExpenseService, ExpenseService>();
-            services.AddScoped<IProfitService, ProfitService>();
             services.AddScoped<IUserContextService, UserContextService>();
             services.AddScoped<IAccountService, AccountService>();
 

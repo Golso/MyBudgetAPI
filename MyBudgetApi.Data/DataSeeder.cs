@@ -25,12 +25,6 @@ namespace MyBudgetApi.Data
                 //    _dbContext.SaveChanges();
                 //}
 
-                //if (!_dbContext.Profits.Any())
-                //{
-                //    var profits = GetProfits();
-                //    _dbContext.Profits.AddRange(profits);
-                //    _dbContext.SaveChanges();
-                //}
 
                 if (!_dbContext.Roles.Any())
                 {
@@ -63,28 +57,6 @@ namespace MyBudgetApi.Data
         //    return expenses;
         //}
 
-        //private IEnumerable<Profit> GetProfits()
-        //{
-        //    var profits = new List<Profit>()
-        //    {
-        //        new Profit()
-        //        {
-        //            Amount = 2197.24,
-        //            Source = "Income",
-        //            Description = "My pay for August.",
-        //            Date = new DateTime(2021, 09, 07)
-        //        },
-        //        new Profit()
-        //        {
-        //            Amount = 100,
-        //            Source = "Income",
-        //            Description = "Gift from friend.",
-        //            Date = new DateTime(2021, 11, 07)
-        //        },
-        //    };
-
-        //    return profits;
-        //}
 
         private static IEnumerable<Role> GetRoles()
         {
