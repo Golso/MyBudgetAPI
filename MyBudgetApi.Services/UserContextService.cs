@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
-using MyBudgetApi.Data.Abstractions;
+using MyBudgetApi.Services.Abstractions;
 using System.Security.Claims;
 
-namespace MyBudgetApi.Data
+namespace MyBudgetApi.Services
 {
     public class UserContextService : IUserContextService
     {

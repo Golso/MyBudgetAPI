@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace MyBudgetApi.Data.Abstractions
+namespace MyBudgetApi.Services.Abstractions
 {
     public interface IUserContextService
     {

@@ -20,8 +20,8 @@ namespace MyBudgetApi.Data.Repositories
         {
             var expense = await PagedList<Expense>
                 .ToPagedList(_context.Expenses
-                    .Where(e => e.UserId == userId 
-                        && e.Amount>= expenseParameters.MinAmount && e.Amount <= expenseParameters.MaxAmount
+                    .Where(e => e.UserId == userId
+                        && e.Amount >= expenseParameters.MinAmount && e.Amount <= expenseParameters.MaxAmount
                         && e.Date >= expenseParameters.MinDate && e.Date <= expenseParameters.MaxDate)
                     .OrderBy(e => e.Id),
                 expenseParameters.PageNumber, expenseParameters.PageSize);

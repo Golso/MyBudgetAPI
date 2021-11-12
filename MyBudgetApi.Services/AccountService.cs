@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using MyBudgetApi.Core.Helpers;
 using MyBudgetApi.Core.Models;
+using MyBudgetApi.Data;
 using MyBudgetApi.Data.Abstractions;
 using MyBudgetApi.Data.Dtos;
 using MyBudgetApi.Data.Exceptions;
 using MyBudgetApi.Data.Models;
+using MyBudgetApi.Services.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,7 +16,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyBudgetApi.Data
+namespace MyBudgetApi.Services
 {
     public class AccountService : IAccountService
     {

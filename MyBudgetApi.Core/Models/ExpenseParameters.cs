@@ -13,4 +13,3 @@ namespace MyBudgetApi.Core.Models
         public bool ValidAmountRange => MinAmount < MaxAmount;
     }
 }
-    

@@ -4,7 +4,6 @@ using MyBudgetApi.Core.Models;
 using MyBudgetApi.Data.Abstractions;
 using MyBudgetApi.Data.Context;
 using MyBudgetApi.Data.Models;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 

@@ -2,15 +2,16 @@
 using Microsoft.AspNetCore.JsonPatch;
 using MyBudgetApi.Core.Helpers;
 using MyBudgetApi.Core.Models;
-using MyBudgetApi.Data.Abstractions;
+using MyBudgetApi.Data;
 using MyBudgetApi.Data.Dtos;
 using MyBudgetApi.Data.Exceptions;
 using MyBudgetApi.Data.Models;
+using MyBudgetApi.Services.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MyBudgetApi.Data
+namespace MyBudgetApi.Services
 {
     public class ExpenseService : IExpenseService
     {
@@ -79,7 +80,7 @@ namespace MyBudgetApi.Data
             {
                 throw new NotFoundException("Expense not found.");
             }
-
+            
             if (expense.UserId != _userContextService.GetUserId)
             {
                 throw new ForbiddenException("Expense of other user.");

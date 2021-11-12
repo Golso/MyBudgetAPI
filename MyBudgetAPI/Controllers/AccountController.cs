@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyBudgetApi.Core.Models;
-using MyBudgetApi.Data.Abstractions;
 using MyBudgetApi.Data.Dtos;
+using MyBudgetApi.Services.Abstractions;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,7 +21,7 @@ namespace MyBudgetApi.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> RegisterUser([FromBody] RegisterUserDto dto)
+        public async Task<ActionResult> RegisterUserAsync([FromBody] RegisterUserDto dto)
         {
             await _service.RegisterUserAsync(dto);
 
@@ -29,7 +29,7 @@ namespace MyBudgetApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login([FromBody] LoginDto dto)
+        public async Task<ActionResult> LoginAsync([FromBody] LoginDto dto)
         {
             string token = await _service.GenerateJwt(dto);
 
@@ -38,7 +38,7 @@ namespace MyBudgetApi.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<IEnumerable<UserReadDto>>> GetAllUsers([FromQuery] AccountParameters accountParameters)
+        public async Task<ActionResult<IEnumerable<UserReadDto>>> GetAllUsersAsync([FromQuery] AccountParameters accountParameters)
         {
             var users = await _service.GetAllUsersAsync(accountParameters);
 

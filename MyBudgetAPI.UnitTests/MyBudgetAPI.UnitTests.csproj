@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="6.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -18,6 +19,14 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyBudgetApi.Core\MyBudgetApi.Core.csproj" />
+    <ProjectReference Include="..\MyBudgetApi.Data\MyBudgetApi.Data.csproj" />
+    <ProjectReference Include="..\MyBudgetApi.Services.Abstractions\MyBudgetApi.Services.Abstractions.csproj" />
+    <ProjectReference Include="..\MyBudgetApi.Services\MyBudgetApi.Services.csproj" />
+    <ProjectReference Include="..\MyBudgetAPI\MyBudgetAPI.csproj" />
   </ItemGroup>
 
 </Project>
