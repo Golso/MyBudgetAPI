@@ -63,7 +63,7 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
         }
 
         [Fact]
-        public void GetExpenseByIdAsync_WithNotExistingExpense_ShouldReturnNotFoundException()
+        public async Task GetExpenseByIdAsync_WithNotExistingExpense_ShouldReturnNotFoundException()
         {
             ///Arrange
             expenseRepoMock.Setup(repo => repo.GetExpenseByIdAsync(1))
@@ -72,16 +72,15 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
 
             //Act
             Func<Task> func = async () => await expenseService.GetExpenseByIdAsync(1);
-            //var result = await expenseService.GetExpenseByIdAsync(1);
 
             //Assert
-            func.Should()
+            await func.Should()
                 .ThrowAsync<NotFoundException>()
                 .WithMessage("Expense not found.");
         }
 
         [Fact]
-        public void GetExpenseByIdAsync_WithWrongUserId_ShouldReturnForbiddenException()
+        public async Task GetExpenseByIdAsync_WithWrongUserId_ShouldReturnForbiddenException()
         {
             ///Arrange
             Expense expense = new()
@@ -101,12 +100,77 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
 
             //Act
             Func<Task> func = async () => await expenseService.GetExpenseByIdAsync(1);
-            //var result = await expenseService.GetExpenseByIdAsync(1);
+
+            //Assert
+            await func.Should()
+                .ThrowAsync<ForbiddenException>()
+                .WithMessage("Expense of other user.");
+        }
+
+        [Fact]
+        public void CreateExpenseAsync_WithExpenseWithNoPositiveAmount_ShouldReturnBadRequestException()
+        {
+            //Arrange
+            ExpenseCreateDto expenseCreateDto = new()
+            {
+                Amount = 0,
+                Category = "Sth",
+                Description = "Sth too",
+                Date = DateTime.Parse("1999-11-11")
+            };
+            ExpenseService expenseService = new(expenseRepoMock.Object, _mapper, userContextServiceMock.Object);
+
+            //Act
+            Func<Task<int>> func = async () => await expenseService.CreateExpenseAsync(expenseCreateDto);
 
             //Assert
             func.Should()
-                .ThrowAsync<ForbiddenException>()
-                .WithMessage("Expense of other user.");
+                .ThrowAsync<BadRequestException>()
+                .WithMessage("Amount is required and it should be positive number.");
+        }
+
+        [Fact]
+        public void CreateExpenseAsync_WithExpenseWithMinimalValueDatetime_ShouldReturnBadRequestException()
+        {
+            //Arrange
+            ExpenseCreateDto expenseCreateDto = new()
+            {
+                Amount = 2,
+                Category = "Sth",
+                Description = "Sth too",
+                Date = DateTime.MinValue
+            };
+            ExpenseService expenseService = new(expenseRepoMock.Object, _mapper, userContextServiceMock.Object);
+
+            //Act
+            Func<Task<int>> func = async () => await expenseService.CreateExpenseAsync(expenseCreateDto);
+
+            //Assert
+            func.Should()
+                .ThrowAsync<BadRequestException>()
+                .WithMessage("Date is required.");
+        }
+
+        [Fact]
+        public async Task CreateExpenseAsync_WithExpenseWithGoodValues_ShouldReturnId()
+        {
+            //Arrange
+            ExpenseCreateDto dto = new()
+            {
+                Amount = 2,
+                Category = "Sth",
+                Description = "Sth too",
+                Date = DateTime.Parse("2000-01-01")
+            };
+            expenseRepoMock.Setup(repo => repo.CreateExpenseAsync(It.IsAny<Expense>())).ReturnsAsync(1);
+            userContextServiceMock.Setup(userContext => userContext.GetUserId).Returns(1);
+            ExpenseService expenseService = new(expenseRepoMock.Object, _mapper, userContextServiceMock.Object);
+
+            //Act
+            var result = await expenseService.CreateExpenseAsync(dto);
+
+            //Assert
+            result.Should().Be(1);
         }
     }
 }
