@@ -172,5 +172,80 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
             //Assert
             result.Should().Be(1);
         }
+
+        [Fact]
+        public void UpdateExpenseAsync_WithExpenseWithNoPositiveAmount_ShouldReturnBadRequestException()
+        {
+            //Arrange
+            ExpenseUpdateDto expenseUpdateDto = new()
+            {
+                Amount = 0,
+                Category = "Sth",
+                Description = "Sth too"
+            };
+            ExpenseService expenseService = new(expenseRepoMock.Object, _mapper, userContextServiceMock.Object);
+
+            //Act
+            Func<Task> func = async () => await expenseService.UpdateExpenseAsync(1, expenseUpdateDto);
+
+            //Assert
+            func.Should()
+                .ThrowAsync<BadRequestException>()
+                .WithMessage("Amount is required and it should be positive number.");
+        }
+
+        [Fact]
+        public void UpdateExpenseAsync_WhenExpenseNotExists_ShouldReturnNotFoundException()
+        {
+            //Arrange
+            ExpenseUpdateDto expenseUpdateDto = new()
+            {
+                Amount = 0,
+                Category = "Sth",
+                Description = "Sth too"
+            };
+            expenseRepoMock.Setup(repo => repo.GetExpenseByIdAsync(1)).ReturnsAsync((Expense)null);
+            ExpenseService expenseService = new(expenseRepoMock.Object, _mapper, userContextServiceMock.Object);
+
+            //Act
+            Func<Task> func = async () => await expenseService.UpdateExpenseAsync(1, expenseUpdateDto);
+
+            //Assert
+            func.Should()
+                .ThrowAsync<NotFoundException>()
+                .WithMessage("Expense not found.");
+        }
+
+        [Fact]
+        public void UpdateExpenseAsync_WithWrongUserIds_ShouldReturnForbiddenException()
+        {
+            //Arrange
+            ExpenseUpdateDto expenseUpdateDto = new()
+            {
+                Amount = 0,
+                Category = "Sth",
+                Description = "Sth too"
+            };
+            Expense expense = new()
+            {
+                Id = 1,
+                Amount = 123,
+                Category = "Debit",
+                Description = "Shopping",
+                Date = DateTime.Parse("1999-01-02"),
+                UserId = 2
+            };
+            expenseRepoMock.Setup(repo => repo.GetExpenseByIdAsync(1)).ReturnsAsync(expense);
+            userContextServiceMock.Setup(userContext => userContext.GetUserId).Returns(1);
+            ExpenseService expenseService = new(expenseRepoMock.Object, _mapper, userContextServiceMock.Object);
+
+            //Act
+            Func<Task> func = async () => await expenseService.UpdateExpenseAsync(1, expenseUpdateDto);
+
+            //Assert
+            func.Should()
+                .ThrowAsync<ForbiddenException>()
+                .WithMessage("Expense of other user.");
+        }
     }
 }
