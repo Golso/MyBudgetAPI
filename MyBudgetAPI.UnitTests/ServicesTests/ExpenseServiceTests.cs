@@ -15,6 +15,8 @@ using MyBudgetApi.Data.Exceptions;
 using FluentAssertions;
 using MyBudgetApi.Data.Dtos;
 using Microsoft.AspNetCore.JsonPatch;
+using MyBudgetApi.Core.Helpers;
+using MyBudgetApi.Core.Models;
 
 namespace MyBudgetAPI.UnitTests.ServicesTests
 {
@@ -106,6 +108,25 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
             await func.Should()
                 .ThrowAsync<ForbiddenException>()
                 .WithMessage("Expense of other user.");
+        }
+
+        [Fact]
+        public async Task GetAllExpensesAsync_WithNoExpenses_ShouldReturnEmptyPagedList()
+        {
+            //Arrange
+            ExpenseParameters expenseParameters = new();
+            List<Expense> listOfExpenses = new();
+            PagedList<Expense> pagedListOfExpenses = new(listOfExpenses, 0, 1, 1);
+            PagedList<ExpenseReadDto> pagedListOfDto = new(_mapper.Map<List<ExpenseReadDto>>(listOfExpenses), 0, 1, 1);
+            expenseRepoMock.Setup(repo => repo.GetAllExpensesAsync(1, expenseParameters)).ReturnsAsync(pagedListOfExpenses);
+            userContextServiceMock.Setup(userContext => userContext.GetUserId).Returns(1);
+            ExpenseService expenseService = new(expenseRepoMock.Object, _mapper, userContextServiceMock.Object);
+
+            //Act
+            PagedList<ExpenseReadDto> result = await expenseService.GetAllExpensesAsync(expenseParameters);
+
+            //Assert
+            result.Should().BeEquivalentTo(pagedListOfDto);
         }
 
         [Fact]
