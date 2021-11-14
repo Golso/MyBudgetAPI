@@ -14,6 +14,7 @@ using MyBudgetApi.MappperProfiles;
 using MyBudgetApi.Data.Exceptions;
 using FluentAssertions;
 using MyBudgetApi.Data.Dtos;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace MyBudgetAPI.UnitTests.ServicesTests
 {
@@ -108,7 +109,7 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
         }
 
         [Fact]
-        public void CreateExpenseAsync_WithExpenseWithNoPositiveAmount_ShouldReturnBadRequestException()
+        public async Task CreateExpenseAsync_WithExpenseWithNoPositiveAmount_ShouldReturnBadRequestException()
         {
             //Arrange
             ExpenseCreateDto expenseCreateDto = new()
@@ -124,13 +125,13 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
             Func<Task<int>> func = async () => await expenseService.CreateExpenseAsync(expenseCreateDto);
 
             //Assert
-            func.Should()
+            await func.Should()
                 .ThrowAsync<BadRequestException>()
                 .WithMessage("Amount is required and it should be positive number.");
         }
 
         [Fact]
-        public void CreateExpenseAsync_WithExpenseWithMinimalValueDatetime_ShouldReturnBadRequestException()
+        public async Task CreateExpenseAsync_WithExpenseWithMinimalValueDatetime_ShouldReturnBadRequestException()
         {
             //Arrange
             ExpenseCreateDto expenseCreateDto = new()
@@ -146,7 +147,7 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
             Func<Task<int>> func = async () => await expenseService.CreateExpenseAsync(expenseCreateDto);
 
             //Assert
-            func.Should()
+            await func.Should()
                 .ThrowAsync<BadRequestException>()
                 .WithMessage("Date is required.");
         }
@@ -174,7 +175,7 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
         }
 
         [Fact]
-        public void UpdateExpenseAsync_WithExpenseWithNoPositiveAmount_ShouldReturnBadRequestException()
+        public async Task UpdateExpenseAsync_WithExpenseWithNoPositiveAmount_ShouldReturnBadRequestException()
         {
             //Arrange
             ExpenseUpdateDto expenseUpdateDto = new()
@@ -189,18 +190,18 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
             Func<Task> func = async () => await expenseService.UpdateExpenseAsync(1, expenseUpdateDto);
 
             //Assert
-            func.Should()
+            await func.Should()
                 .ThrowAsync<BadRequestException>()
                 .WithMessage("Amount is required and it should be positive number.");
         }
 
         [Fact]
-        public void UpdateExpenseAsync_WhenExpenseNotExists_ShouldReturnNotFoundException()
+        public async Task UpdateExpenseAsync_WhenUpdatedExpenseNotExists_ShouldReturnNotFoundException()
         {
             //Arrange
             ExpenseUpdateDto expenseUpdateDto = new()
             {
-                Amount = 0,
+                Amount = 1,
                 Category = "Sth",
                 Description = "Sth too"
             };
@@ -211,18 +212,18 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
             Func<Task> func = async () => await expenseService.UpdateExpenseAsync(1, expenseUpdateDto);
 
             //Assert
-            func.Should()
+            await func.Should()
                 .ThrowAsync<NotFoundException>()
                 .WithMessage("Expense not found.");
         }
 
         [Fact]
-        public void UpdateExpenseAsync_WithWrongUserIds_ShouldReturnForbiddenException()
+        public async Task UpdateExpenseAsync_WithWrongUserIds_ShouldReturnForbiddenException()
         {
             //Arrange
             ExpenseUpdateDto expenseUpdateDto = new()
             {
-                Amount = 0,
+                Amount = 1,
                 Category = "Sth",
                 Description = "Sth too"
             };
@@ -243,7 +244,67 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
             Func<Task> func = async () => await expenseService.UpdateExpenseAsync(1, expenseUpdateDto);
 
             //Assert
-            func.Should()
+            await func.Should()
+                .ThrowAsync<ForbiddenException>()
+                .WithMessage("Expense of other user.");
+        }
+
+        [Fact]
+        public async Task PartialUpdateExpenseAsync_WithNullJsonPatch_ShouldReturnBadRequestException()
+        {
+            //Arrange
+            JsonPatchDocument<ExpenseUpdateDto> jsonPatchDocument = null;
+            ExpenseService expenseService = new(expenseRepoMock.Object, _mapper, userContextServiceMock.Object);
+
+            //Act
+            Func<Task> func = async () => await expenseService.PartialUpdateExpenseAsync(It.IsAny<int>(), jsonPatchDocument);
+
+            //Assert
+            await func.Should()
+                .ThrowAsync<BadRequestException>()
+                .WithMessage("patchDocument object is null.");
+        }
+
+        [Fact]
+        public async Task PartialUpdateExpenseAsync_WhenUpdatedExpenseNotExists_ShouldReturnNotFoundException()
+        {
+            //Arrange
+            JsonPatchDocument<ExpenseUpdateDto> jsonPatchDocument = new();
+            expenseRepoMock.Setup(repo => repo.GetExpenseByIdAsync(1)).ReturnsAsync((Expense)null);
+            ExpenseService expenseService = new(expenseRepoMock.Object, _mapper, userContextServiceMock.Object);
+
+            //Act
+            Func<Task> func = async () => await expenseService.PartialUpdateExpenseAsync(1, jsonPatchDocument);
+
+            //Assert
+            await func.Should()
+                .ThrowAsync<NotFoundException>()
+                .WithMessage("Expense not found.");
+        }
+
+        [Fact]
+        public async Task PartialUpdateExpenseAsync_WithWrongUserIds_ShouldReturnForbiddenException()
+        {
+            //Arrange
+            Expense expense = new()
+            {
+                Id = 1,
+                Amount = 123,
+                Category = "Debit",
+                Description = "Shopping",
+                Date = DateTime.Parse("1999-01-02"),
+                UserId = 2
+            };
+            JsonPatchDocument<ExpenseUpdateDto> jsonPatchDocument = new();
+            expenseRepoMock.Setup(repo => repo.GetExpenseByIdAsync(1)).ReturnsAsync(expense);
+            userContextServiceMock.Setup(userContext => userContext.GetUserId).Returns(1);
+            ExpenseService expenseService = new(expenseRepoMock.Object, _mapper, userContextServiceMock.Object);
+
+            //Act
+            Func<Task> func = async () => await expenseService.PartialUpdateExpenseAsync(1, jsonPatchDocument);
+
+            //Assert
+            await func.Should()
                 .ThrowAsync<ForbiddenException>()
                 .WithMessage("Expense of other user.");
         }
