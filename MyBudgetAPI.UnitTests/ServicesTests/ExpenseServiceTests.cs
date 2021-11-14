@@ -308,5 +308,47 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
                 .ThrowAsync<ForbiddenException>()
                 .WithMessage("Expense of other user.");
         }
+
+        [Fact]
+        public async Task DeleteExpenseAsync_WhenExpenseNotExists_ShouldReturnNotFoundException()
+        {
+            //Arrange
+            expenseRepoMock.Setup(repo => repo.GetExpenseByIdAsync(It.IsAny<int>())).ReturnsAsync((Expense)null);
+            ExpenseService expenseService = new(expenseRepoMock.Object, _mapper, userContextServiceMock.Object);
+
+            //Act
+            Func<Task> func = async () => await expenseService.DeleteExpenseAsync(1);
+
+            //Assert
+            await func.Should()
+                .ThrowAsync<NotFoundException>()
+                .WithMessage("Expense not found.");
+        }
+
+        [Fact]
+        public async Task DeleteExpenseAsync_WithWrongUserIds_ShouldReturnForbiddenException()
+        {
+            //Arrange
+            Expense expense = new()
+            {
+                Id = 1,
+                Amount = 123,
+                Category = "Debit",
+                Description = "Shopping",
+                Date = DateTime.Parse("1999-01-02"),
+                UserId = 2
+            };
+            expenseRepoMock.Setup(repo => repo.GetExpenseByIdAsync(It.IsAny<int>())).ReturnsAsync(expense);
+            userContextServiceMock.Setup(userContext => userContext.GetUserId).Returns(1);
+            ExpenseService expenseService = new(expenseRepoMock.Object, _mapper, userContextServiceMock.Object);
+
+            //Act
+            Func<Task> func = async () => await expenseService.DeleteExpenseAsync(1);
+
+            //Assert
+            await func.Should()
+                .ThrowAsync<ForbiddenException>()
+                .WithMessage("Expense of other user.");
+        }
     }
 }
