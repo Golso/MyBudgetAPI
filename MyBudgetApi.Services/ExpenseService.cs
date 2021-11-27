@@ -80,7 +80,7 @@ namespace MyBudgetApi.Services
             {
                 throw new NotFoundException("Expense not found.");
             }
-            
+
             if (expense.UserId != _userContextService.GetUserId)
             {
                 throw new ForbiddenException("Expense of other user.");

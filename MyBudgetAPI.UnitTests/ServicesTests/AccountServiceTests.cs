@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-using Moq;
-using MyBudgetApi.Data.Abstractions;
-using AutoMapper;
+﻿using AutoMapper;
+using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
+using Moq;
+using MyBudgetApi.Core.Helpers;
+using MyBudgetApi.Core.Models;
 using MyBudgetApi.Data;
+using MyBudgetApi.Data.Abstractions;
+using MyBudgetApi.Data.Dtos;
+using MyBudgetApi.Data.Exceptions;
 using MyBudgetApi.Data.Models;
 using MyBudgetApi.MappperProfiles;
-using MyBudgetApi.Core.Models;
-using MyBudgetApi.Core.Helpers;
-using MyBudgetApi.Data.Dtos;
 using MyBudgetApi.Services;
-using FluentAssertions;
-using MyBudgetApi.Data.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace MyBudgetAPI.UnitTests.ServicesTests
 {
@@ -55,7 +53,9 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
             PagedList<UserReadDto> result = await accountService.GetAllUsersAsync(accountParameters);
 
             //Assert
-            result.Should().BeEquivalentTo(pagedListOfDto);
+            result.Should().BeEquivalentTo(
+                pagedListOfDto,
+                options => options.ComparingByMembers<PagedList<UserReadDto>>());
         }
 
         [Fact]
@@ -99,7 +99,7 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
                 RoleId = 0
             };
             accountRepoMock.Setup(repo => repo.GetUserByEmailAsync(It.IsAny<string>())).ReturnsAsync(user);
-            passwordHasherMock.Setup(hasher => 
+            passwordHasherMock.Setup(hasher =>
                 hasher.VerifyHashedPassword(user, user.PasswordHash, loginDto.Password))
                 .Returns(PasswordVerificationResult.Failed);
             AccountService accountService = new(accountRepoMock.Object, _mapper, passwordHasherMock.Object, _authenticationSettings);

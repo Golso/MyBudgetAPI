@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-using Moq;
-using MyBudgetApi.Data;
-using AutoMapper;
-using MyBudgetApi.Services.Abstractions;
-using MyBudgetApi.Services;
-using MyBudgetApi.Data.Models;
-using MyBudgetApi.MappperProfiles;
-using MyBudgetApi.Data.Exceptions;
+﻿using AutoMapper;
 using FluentAssertions;
-using MyBudgetApi.Data.Dtos;
 using Microsoft.AspNetCore.JsonPatch;
+using Moq;
 using MyBudgetApi.Core.Helpers;
 using MyBudgetApi.Core.Models;
+using MyBudgetApi.Data;
+using MyBudgetApi.Data.Dtos;
+using MyBudgetApi.Data.Exceptions;
+using MyBudgetApi.Data.Models;
+using MyBudgetApi.MappperProfiles;
+using MyBudgetApi.Services;
+using MyBudgetApi.Services.Abstractions;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace MyBudgetAPI.UnitTests.ServicesTests
 {
@@ -56,13 +54,15 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
                 .ReturnsAsync(expense);
             userContextServiceMock.Setup(userService => userService.GetUserId).Returns(1);
             ExpenseService expenseService = new(expenseRepoMock.Object, _mapper, userContextServiceMock.Object);
-            
+
 
             //Act
             var result = await expenseService.GetExpenseByIdAsync(1);
 
             //Assert
-            result.Should().BeEquivalentTo(_mapper.Map<ExpenseReadDto>(expense));
+            result.Should().BeEquivalentTo(
+                _mapper.Map<ExpenseReadDto>(expense),
+                options => options.ComparingByMembers<ExpenseReadDto>());
         }
 
         [Fact]
@@ -126,7 +126,9 @@ namespace MyBudgetAPI.UnitTests.ServicesTests
             PagedList<ExpenseReadDto> result = await expenseService.GetAllExpensesAsync(expenseParameters);
 
             //Assert
-            result.Should().BeEquivalentTo(pagedListOfDto);
+            result.Should().BeEquivalentTo(
+                pagedListOfDto,
+                options => options.ComparingByMembers<PagedList<ExpenseReadDto>>());
         }
 
         [Fact]
