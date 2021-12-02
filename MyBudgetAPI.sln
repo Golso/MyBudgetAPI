@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBudgetApi.Services", "MyB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBudgetApi.Services.Abstractions", "MyBudgetApi.Services.Abstractions\MyBudgetApi.Services.Abstractions.csproj", "{A672C0C5-6190-40FD-9538-55866761C53B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBudgetAPI.UnitTests", "MyBudgetAPI.UnitTests\MyBudgetAPI.UnitTests.csproj", "{255CB743-0CC7-491D-8359-EC5DEBB3E3BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBudgetAPI.UnitTests", "MyBudgetAPI.UnitTests\MyBudgetAPI.UnitTests.csproj", "{255CB743-0CC7-491D-8359-EC5DEBB3E3BE}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9EDB767F-D04E-41BB-A080-4854F2672510}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{255CB743-0CC7-491D-8359-EC5DEBB3E3BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{255CB743-0CC7-491D-8359-EC5DEBB3E3BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{255CB743-0CC7-491D-8359-EC5DEBB3E3BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EDB767F-D04E-41BB-A080-4854F2672510}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EDB767F-D04E-41BB-A080-4854F2672510}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EDB767F-D04E-41BB-A080-4854F2672510}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EDB767F-D04E-41BB-A080-4854F2672510}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
