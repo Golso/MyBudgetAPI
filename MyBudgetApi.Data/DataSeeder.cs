@@ -27,24 +27,18 @@ namespace MyBudgetApi.Data
             if (_dbContext.Database.CanConnect())
             {
                 
-                if (!_dbContext.Roles.Any())
+                if (!_dbContext.Roles.Any() && !_dbContext.Users.Any() && !_dbContext.Expenses.Any())
                 {
                     var roles = GetRoles();
                     _dbContext.Roles.AddRange(roles);
                     _dbContext.SaveChanges();
-                }
 
-                if (!_dbContext.Users.Any())
-                {
                     var users = GetUsers();
                     _dbContext.Users.Add(users[0]);
                     _dbContext.SaveChanges();
                     _dbContext.Users.Add(users[1]);
                     _dbContext.SaveChanges();
-                }
 
-                if (!_dbContext.Expenses.Any())
-                {
                     var expenses = GetExpenses();
                     _dbContext.Expenses.AddRange(expenses);
                     _dbContext.SaveChanges();
@@ -54,6 +48,7 @@ namespace MyBudgetApi.Data
 
         private IEnumerable<Expense> GetExpenses()
         {
+            var users = _dbContext.Users.OrderBy(e => e.FirstName).ToList();
             var expenses = new List<Expense>()
             {
                 new Expense()
@@ -62,7 +57,7 @@ namespace MyBudgetApi.Data
                     Category = "Shopping",
                     Description = "Food store",
                     Date = DateTime.Parse("2012-03-01"),
-                    UserId = 2
+                    UserId = users[1].Id
                 },
                 new Expense()
                 {
@@ -70,7 +65,7 @@ namespace MyBudgetApi.Data
                     Category = "Electronics",
                     Description = "Mobile phone",
                     Date = DateTime.Parse("2014-02-01"),
-                    UserId = 2
+                    UserId = users[1].Id
                 },
                 new Expense()
                 {
@@ -78,7 +73,7 @@ namespace MyBudgetApi.Data
                     Category = "Shopping",
                     Description = "Cigaretes",
                     Date = DateTime.Parse("2013-01-01"),
-                    UserId = 2
+                    UserId = users[1].Id
                 },
                 new Expense()
                 {
@@ -86,7 +81,7 @@ namespace MyBudgetApi.Data
                     Category = "Test",
                     Description = "Admin expense",
                     Date = DateTime.Parse("2021-01-01"),
-                    UserId = 1
+                    UserId = users[0].Id
                 }
             };
 
@@ -107,8 +102,8 @@ namespace MyBudgetApi.Data
                 new User()
                 {
                     Email = "user@gmail.com",
-                    FirstName = "user",
-                    LastName = "user",
+                    FirstName = "User",
+                    LastName = "User",
                     RoleId = 1
                 }
             };
